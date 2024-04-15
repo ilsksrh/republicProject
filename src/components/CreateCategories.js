@@ -22,7 +22,7 @@ export default function CreateCategories() {
     const handleSubmit = async (ev) => {
         ev.preventDefault();
         const savedCat = await createCat(cat);
-        navigate("/goods", {state: { message: savedCat.name + " saved ", title: "Saved cat" }})
+        navigate("/animals", {state: { message: savedCat.name + " saved ", title: "Saved cat" }})
     };
 
     return (

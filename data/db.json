@@ -1,63 +1,13 @@
 {
-  "goods": [
-    {
-      "id": "da73",
-      "name": "Овчарка",
-      "city": "Алматы",
-      "price": 3333,
-      "categoryId": null,
-      "image": "cat4.png"
-    },
-    {
-      "id": "35e2",
-      "name": "Danel",
-      "city": "try",
-      "price": 1234,
-      "categoryId": "048",
-      "img": null,
-      "image": {}
-    },
-    {
-      "id": "0dad",
-      "name": "dan",
-      "city": "dan",
-      "price": 11111,
-      "categoryId": "048",
-      "image": {}
-    },
-    {
-      "id": "4966",
-      "name": "2",
-      "city": "2",
-      "price": 1,
-      "categoryId": "878",
-      "image": {}
-    },
-    {
-      "id": "88bf",
-      "name": "www",
-      "city": "www",
-      "price": 1111,
-      "categoryId": "878",
-      "image": {}
-    },
-    {
-      "id": "0fe0",
-      "name": "123456",
-      "city": "1234567",
-      "price": 123456,
-      "categoryId": "878",
-      "image": {}
-    }
-  ],
+  "animals": [],
   "categories": [
     {
-      "id": "878",
+      "id": "d795",
       "name": "Собаки"
     },
     {
-      "id": "048",
-      "name": "Птицы"
+      "id": "e590",
+      "name": "wefrgh"
     }
   ]
 }

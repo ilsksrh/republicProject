@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useState } from 'react';
-import { getOneGood, saveGood, updateGood, getAllCategories } from './api';
+import { getOneAnimal, saveAnimal, updateAnimal, getAllCategories } from './api';
 import 'react-notifications/lib/notifications.css';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {useNavigate, useParams} from 'react-router-dom'
@@ -12,15 +12,15 @@ export default function EditForm() {
     const params = useParams();
 
     useEffect(() => {
-        const getGood = async () => {
-            const resp = await getOneGood(params.goodId);
-            setGood(resp)
+        const getAnimal = async () => {
+            const resp = await getOneAnimal(params.animalId);
+            setAnimal(resp)
         }
-      getGood()
+      getAnimal()
     }, [])
     const [categories, setCategories] = useState([]);
 
-    const [good, setGood] = useState({
+    const [animal, setAnimal] = useState({
         name: '',
         city: '',
         price: 0,
@@ -35,16 +35,16 @@ export default function EditForm() {
         fetchCategories();
     }, []);
 
-    const handleName = (ev) => { setGood({ ...good, name: ev.target.value }) };
-    const handleCity = (ev) => { setGood({ ...good, city: ev.target.value }) };
-    const handlePrice = (ev) => { setGood({ ...good, price: parseInt(ev.target.value) }) };
-    const handleCategory = (ev) => { setGood({ ...good, categoryId: ev.target.value }) }; 
+    const handleName = (ev) => { setAnimal({ ...animal, name: ev.target.value }) };
+    const handleCity = (ev) => { setAnimal({ ...animal, city: ev.target.value }) };
+    const handlePrice = (ev) => { setAnimal({ ...animal, price: parseInt(ev.target.value) }) };
+    const handleCategory = (ev) => { setAnimal({ ...animal, categoryId: ev.target.value }) }; 
 
 
     const handleSubmit = async (ev) => {
         ev.preventDefault();
-        const updatedGood = await updateGood(good);
-        navigate("/goods", {state: { message: updatedGood.name + " updated ", title: "Updated good" }})
+        const updatedAnimal = await updateAnimal(animal);
+        navigate("/animals", {state: { message: updatedAnimal.name + " updated ", title: "Updated animal" }})
     };
 
     return (
@@ -54,20 +54,20 @@ export default function EditForm() {
              <div className="max-w-md w-full space-y-8">
                 <div>
                 <h2 className=" text-2xl text-black mb-4">Name</h2>               
-                  <input type="text" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Name" value={good.name} onChange={handleName} />
+                  <input type="text" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Name" value={animal.name} onChange={handleName} />
                 </div>
                 <div>
                 <h2 className=" text-2xl text-black mb-4">City</h2>               
-                 <input className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="City" type="text" value={good.city} onChange={handleCity} />
+                 <input className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="City" type="text" value={animal.city} onChange={handleCity} />
                  </div>
                 <div>
 
                 <h2 className=" text-2xl text-black mb-4">Price</h2>               
-                 <input className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Price" type="number" value={good.price} onChange={handlePrice} /> <br />
+                 <input className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Price" type="number" value={animal.price} onChange={handlePrice} /> <br />
                 </div>
                 <div>
                 <h2 className=" text-2xl text-black mb-4">Category</h2>
-                <select value={good.categoryId} onChange={handleCategory} className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm">
+                <select value={animal.categoryId} onChange={handleCategory} className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm">
                  <option value="">Select Category</option>
                      {categories.map(category => (
                          <option key={category.id} value={category.id}>{category.name}</option>
