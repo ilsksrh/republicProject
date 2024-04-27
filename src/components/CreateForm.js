@@ -16,7 +16,7 @@ export default function CreateForm() {
         city: '',
         price: 0,
         categoryId: '',
-        image: null
+        // image: null
     });
     const [categories, setCategories] = useState([]);
 
@@ -34,8 +34,7 @@ export default function CreateForm() {
     const handleCity = (ev) => { setAnimal({ ...animal, city: ev.target.value }) };
     const handlePrice = (ev) => { setAnimal({ ...animal, price: parseInt(ev.target.value) }) };
     const handleCategory = (ev) => { setAnimal({ ...animal, categoryId: ev.target.value }) }; 
-    const handleImageUpload = (ev) => {setAnimal({ ...animal, image: ev.target.files[0] });
-    };
+    // const handleImageUpload = (ev) => {setAnimal({ ...animal, image: ev.target.files[0] })};
     
 
     const handleSubmit = async (ev) => {
@@ -71,10 +70,10 @@ export default function CreateForm() {
                  </select>
                  
                 </div>
-                <div>
+                {/* <div>
                     <h2 className="text-2xl text-black mb-2">Image</h2>
                     <input type="file" accept="image/*" onChange={handleImageUpload} />
-                        </div>
+                </div> */}
                 <button className='bg-indira text-white font-semibold py-2 px-4 rounded-lg' type="submit">
                     Save
                 </button>

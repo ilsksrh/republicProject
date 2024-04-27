@@ -1,19 +1,29 @@
-import { useState, useEffect } from 'react';
-import TokenService from '../services/token.service';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import authHeader from '../services/auth-header';
 
-export default function Blog(){
+export default function Blog() {
     const [posts, setPosts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null); 
+    const [userId, setUserId] = useState(null);
+
     useEffect(() => {
         fetchPosts();
-    }, []);
+        fetchCategories();
+    }, [selectedCategoryId, userId]);
 
     const fetchPosts = async () => {
         try {
-            const token = TokenService.getLocalAccessToken();
-            const response = await fetch('http://localhost:8080/api/posts', {
+            let url = 'http://localhost:8080/api/posts';
+            if (selectedCategoryId) {
+                url += `?categoryId=${selectedCategoryId}`;
+            } else if (userId) {
+                url += `?userId=${userId}`;
+            }
+            const response = await fetch(url, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    ...authHeader()
                 }
             });
             if (response.ok) {
@@ -26,7 +36,73 @@ export default function Blog(){
             console.error('Error fetching posts:', error.message);
         }
     };
+    
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/categories', {
+                headers:
+                    authHeader()
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setCategories(data);
+            } else {
+                console.error('Failed to fetch categories:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error.message);
+        }
+    };
+    
 
+    // CRUD Operations
+    const createCategory = async (categoryData) => {
+        try {
+        
+            const response = await fetch('http://localhost:8080/api/categories', {
+                method: 'POST',
+                headers: {
+                    ...authHeader(),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(categoryData),
+            });
+            if (response.ok) {
+                fetchCategories();
+            } else {
+                console.error('Failed to create category:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error creating category:', error.message);
+        }
+    };
+
+    const deleteCategory = async (categoryId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/categories/${categoryId}`, {
+                method: 'DELETE',
+                headers: authHeader()
+            });
+            if (response.ok) {
+                fetchCategories();
+            } else {
+                console.error('Failed to delete category:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error deleting category:', error.message);
+        }
+    };
+
+    const handleShowMyPosts = () => {
+        setUserId(userId);
+        setSelectedCategoryId(null);
+    };
+
+    const handleShowCategoryPosts = (categoryId) => {
+        setSelectedCategoryId(categoryId);
+        setUserId(null);
+    };
+    
     return (
         <div>
             {/* <!-- Page content--> */}
@@ -84,21 +160,34 @@ export default function Blog(){
                                 <div className="row">
                                     <div className="col-sm-6">
                                         <ul className="list-unstyled mb-0">
-                                            <li><a href="#!">Web Design</a></li>
-                                            <li><a href="#!">HTML</a></li>
-                                            <li><a href="#!">Freebies</a></li>
+                                            {categories.map(category => (
+                                                <li key={category.id}>
+                                                    <span>{category.name}</span>
+                                                    <button onClick={() => deleteCategory(category.id)} className="btn btn-danger btn-sm ml-2">Delete</button>
+                                                    <button onClick={() => handleShowCategoryPosts(category.id)} className="btn btn-primary btn-sm ml-2">Show</button>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
+                                    {/* Add new category */}
                                     <div className="col-sm-6">
-                                        <ul className="list-unstyled mb-0">
-                                            <li><a href="#!">JavaScript</a></li>
-                                            <li><a href="#!">CSS</a></li>
-                                            <li><a href="#!">Tutorials</a></li>
-                                        </ul>
+                                        <form onSubmit={(e) => {
+                                            e.preventDefault();
+                                            const formData = new FormData(e.target);
+                                            const name = formData.get('name');
+                                            createCategory({ name });
+                                        }}>
+                                            <div className="form-group">
+                                                <input type="text" name="name" className="form-control" placeholder="New category name" required />
+                                            </div>
+                                            <button type="submit" className="btn btn-primary">Create</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {/* Show my posts button */}
+                        <button onClick={handleShowMyPosts} className="btn btn-primary">Show My Posts</button>
                         {/* <!-- Side widget--> */}
                         <div className="card mb-4">
                             <div className="card-header">Side Widget</div>
@@ -109,6 +198,4 @@ export default function Blog(){
             </div>
         </div>
     );
-    
 }
-

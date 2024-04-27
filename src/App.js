@@ -5,15 +5,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 import AuthService from "./services/auth.service";
-
-import Login from "./components/login.component";
-import Register from "./components/register.component";
+import Login from "./components/newLogin.js";
+import Register from "./components/Register.js";
 import Registration from "./components/Registration";
-import Home from "./components/home.component";
-import Profile from "./components/profile.component";
-import BoardUser from "./components/board-user.component";
-import BoardModerator from "./components/board-moderator.component";
-import BoardAdmin from "./components/board-admin.component";
+import Home from "./components/Home.js";
+import Profile from "./components/Profile.js";
+import BoardUser from "./components/boardUser.js";
+import BoardModerator from "./components/boardModerator.js";
+import BoardAdmin from "./components/boardAdmin.js";
 
 import Animals from './components/Animals';
 import AnimalItem from './components/AnimalItem';

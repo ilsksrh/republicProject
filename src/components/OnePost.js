@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import TokenService from '../services/token.service';
+
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import authHeader from '../services/auth-header';
 
 export default function OnePost() {
     const [post, setPost] = useState(null);
@@ -15,11 +16,9 @@ export default function OnePost() {
     
     const fetchPost = async (id) => {
         try {
-            const token = TokenService.getLocalAccessToken();
+
             const response = await fetch(`http://localhost:8080/api/posts/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+                headers: authHeader()
             });
             if (response.ok) {
                 const data = await response.json();
@@ -34,12 +33,9 @@ export default function OnePost() {
 
     const handleDelete = async () => {
         try {
-            const token = TokenService.getLocalAccessToken();
             const response = await fetch(`http://localhost:8080/api/posts/${postId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+                headers: authHeader()
             });
             if (response.ok) {
                 console.log('Post deleted successfully');
@@ -80,7 +76,7 @@ export default function OnePost() {
                 {/* <!-- Post content--> */}
                 <section class="mb-5">
                     <p class="fs-5 mb-4">{post.description}</p>
-                    <p class="fs-5 mb-4">Author:{post.userId}</p>
+                    <p class="fs-5 mb-4">Author:{post.user_id}</p>
                     <button className="btn btn-primary me-2"><Link to = {'/posts/'+post.id + '/edit'}>Edit</Link></button>
                     <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
                 </section>

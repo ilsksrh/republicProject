@@ -1,13 +1,13 @@
 {
-  "animals": [],
-  "categories": [
+  "animals": [
     {
-      "id": "d795",
-      "name": "Собаки"
-    },
-    {
-      "id": "e590",
-      "name": "wefrgh"
+      "id": "5601",
+      "name": "DD",
+      "city": "DD",
+      "price": 2343,
+      "categoryId": null,
+      "image": null
     }
-  ]
+  ],
+  "categories": []
 }

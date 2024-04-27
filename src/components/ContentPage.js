@@ -19,7 +19,6 @@ export default function ContentPage() {
     { id: 2, image: cat2Image, text: 'Danel', buttonLabel: 'Узнать больше' },
     { id: 3, image: cat3Image, text: 'Yasmine', buttonLabel: 'Узнать больше' },
     { id: 4, image: cat4Image, text: 'Indira', buttonLabel: 'Узнать больше' },
-    
   ];
 
   return (
