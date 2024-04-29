@@ -189,7 +189,7 @@ export default function About() {
                         <div>Поддержка платформы</div>
                         <div>Помощь приютам на  покупку лекарств, наполнителей и корма</div>
                         <button style={{backgroundColor: "#059666", border: "none", borderRadius: "8px", padding: "8px 12px", color: "white", fontSize: "16px", width: "200px"}}>
-                            <Link to={'/about/signup'}>Пожертвовать</Link>
+                            <Link to={'/register'}>Пожертвовать</Link>
                         </button>
                     </div>
                 </div>

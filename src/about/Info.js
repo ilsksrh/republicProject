@@ -2,6 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import '../css/test.css'; // файл стилей
 import info from '../images/info.png';
+import Footer from '../Footer';
 
 
 
@@ -24,7 +25,7 @@ export default function Info() {
     return (
         <div>
 
-            <div style={{height: "360px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <div style={{height: "360px", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "white"}}>
                 <div style={{width: "80%", display: "flex", flexDirection: "row", justifyContent: "space-around", alignItems: "center"}}>
                     <div style={{width: "40%", display: "flex", justifyContent: "center", flexDirection: "column"}}>
                         <div style={{fontSize: "32px", padding: "10px"}}>
@@ -72,6 +73,8 @@ export default function Info() {
                     </div>
                 </div>
             </div>
+
+            <Footer />
 
         </div>
     );

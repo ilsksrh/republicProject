@@ -45,7 +45,7 @@ export default function Lost() {
                                 <div style={{padding: "10px 0"}}>информация о животном</div>
                                 <div style={{display: "flex", justifyContent: "end"}}>
                                     <button style={{backgroundColor: "#059666", border: "none", margin: "6px", borderRadius: "8px", padding: "6px 8px", color: "white", fontSize: "12px"}}>
-                                        <Link to={'/about/signup'}>Написать владельцу</Link>
+                                        <Link to={'/'}>Написать владельцу</Link>
                                     </button>
                                 </div>
                                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", paddingTop: "10px", fontSize: "12px"}}>

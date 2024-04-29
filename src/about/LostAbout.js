@@ -4,7 +4,7 @@ import cat from '../images/cat.png';
 import dog from '../images/dog.png';
 import etc from '../images/etc.png';
 import location from '../images/Location-3.png';
-import foto from '../images/MM9753_210811_01412_3x2.jpg';
+import foto from '../images/440273410_829154312588065_7349255054648964823_n.jpg';
 
 export default function LostAbout() {
   
@@ -45,11 +45,11 @@ export default function LostAbout() {
                         <div style={{backgroundColor: "white", borderRadius: "8px"}}>
                             <div><img src={foto} width={320} height={240} style={{borderRadius: "8px"}} /></div>
                             <div style={{padding: "20px"}}>
-                                <div style={{fontSize: "18px"}}>Рекс</div>
+                                <div style={{fontSize: "18px"}}>Георджина</div>
                                 <div style={{padding: "10px 0"}}>информация о животном</div>
                                 <div style={{display: "flex", justifyContent: "end"}}>
                                     <button style={{backgroundColor: "#059666", border: "none", margin: "6px", borderRadius: "8px", padding: "6px 8px", color: "white", fontSize: "12px"}}>
-                                        <Link to={'/about/signup'}>Написать владельцу</Link>
+                                        <Link to={'/register'}>Написать владельцу</Link>
                                     </button>
                                 </div>
                                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", paddingTop: "10px", fontSize: "12px"}}>
