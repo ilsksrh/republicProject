@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: Damir2005
+    url: jdbc:postgresql://localhost:5432/postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+resqtails.app.jwtSecret: my32characterultrasecureandultralongsecretlklklklkl
+resqtails.app.jwtExpirationMs: 86400000
