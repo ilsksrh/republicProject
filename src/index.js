@@ -1,17 +1,99 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import News from './News';
+import Test from './Test';
+import Info from './about/Info';
+import LostAbout from './about/LostAbout';
+import Lost from './Lost';
+import About from './about/About';
+import AboutPage from './about/AboutPage';
+import Posts from './Posts';
+import './css/main.css';
+import CreatePost from './CreatePost';
+import SignIn from './auth/SignIn';
+import SignUp from './auth/SignUp';
+import Profile from './Profile';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+
+const routes = createBrowserRouter(
+    [
+        {
+          path: "/",
+          element: <App />,
+          children: [
+            {
+              path: "/home",
+            },
+            {
+              path: "/news",
+              element: <News />,
+            },
+            {
+              path: "/post",
+              element: <Posts />,
+            },
+            {
+              path: "/",
+            },
+            {
+              path: "/lost",
+              element: <Lost />,
+            },
+            {
+              path: "/create",
+              element: <CreatePost />
+            },
+            {
+              path: "/profile",
+              element: <Profile/> 
+            }
+          ]
+        },
+        {
+          path: "/about",
+          element: <AboutPage />,
+          children: [
+            {
+              path: "/about/",
+              element: <About />
+            },
+            {
+              path: "/about/info",
+              element: <Info />
+            },
+            {
+              path: "/about/lost",
+              element: <LostAbout />
+            }
+          ]
+        },
+        {
+          path: "/news",
+          element: <News />,
+          // loader: async ( {params} ) => {
+          //   return (await NewsService.getNews(params.newsID)).data
+          // }
+        },
+        {
+          path: "/test",
+          element: <Test />
+        },
+        {
+          path: "/login",
+          element: <SignIn/>
+        }
+        ,
+        {
+          path: "/register",
+          element: <SignUp/>
+        }
+    ]
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+root.render(
+    <RouterProvider router={routes} />
+)

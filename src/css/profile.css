@@ -1,0 +1,143 @@
+.explore-main{
+    font-family: "HM Sans", sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.explore-post{
+    margin: 4px;
+}
+
+.explore-content{
+    display: flex;
+    flex-wrap: wrap;
+    width: 975px;
+    margin-bottom: 30px;
+    padding: 24px 20px 0 20px;
+}
+
+.explore-header{
+    width: 1015px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #65676B;
+}
+
+.explore-header-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #059666;
+    height: 100%;
+    width: 100%;
+    margin-top: 1px;
+}
+
+.explore-header-container > div{
+    width: 500px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.explore-catalog{
+    color: white;
+    font-weight: bold;
+    padding: 5px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.explore-post-img{
+    height: 317px;
+    width: 317px;
+    display: block;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+/* post */
+
+a{
+    color: aliceblue;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.profile{
+    display: flex;
+    width: 1015px;
+    margin-top: 30px;
+    margin-bottom: 44px;
+}
+
+.profile-avatar{
+    display: flex;
+    justify-content: center;
+    width: 300px;
+    margin-right: 30px;
+}
+
+.profile-avatar-image{
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+}
+
+.profile-content{
+    max-width: 688px;
+    font-weight: bold;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.user{
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+}
+
+.post-username {
+    display: flex;
+    margin-right: 20px;
+    font-size: 20px;
+}
+
+.followers{
+    display: flex;
+    width: 100%;
+}
+
+.followers > div{
+    display: flex;
+    margin-right: 20px;
+}
+
+.bio{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.bio > div{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.edit{
+    display: flex;
+    font-size: 15px;
+    background-color: #059666;
+    padding: 7px 14px;
+    border-radius: 6px;
+}

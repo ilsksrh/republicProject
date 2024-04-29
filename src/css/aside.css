@@ -1,0 +1,83 @@
+.aside{
+    width: 260px;
+    height: 100%;
+    position: fixed;
+    background-color: #059666;
+    font-family: 'Gill Sans', sans-serif;
+    color: white;
+    border: 1px solid #ccc;
+}
+.LogoutButton{
+    border: none;
+    background-color: #059666;
+}
+
+.aside-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding: 8px 12px 20px 12px;
+}
+
+.aside-main{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 12px 12px 0px 12px;
+    margin: 0px 0px 19px 0px;
+}
+
+.aside-menu{
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+}
+
+.aside-more{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0px;
+    margin: 0px;
+}
+
+.aside-field-group {
+    padding: 12px;
+    margin: 4px;
+    border: 8px;
+    border-radius: 8px;
+}
+/*  */
+.aside-field-group:hover{
+    background-color: #064E36;
+}
+
+.main {
+    display: flex;
+}
+
+.center{
+    display: flex;
+    align-items: center;
+}
+
+.pg-16{
+    padding-left: 16px;
+}
+
+.profile_img{
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background-color: darkgrey;
+}
+
+a {
+    color: aliceblue;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+

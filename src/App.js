@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import Aside from "./Aside";
+import { Link, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+import './css/test.css';
+
+
+
+export default function App() {
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{display: "flex", height: "100%", width: "100%"}}>
+      <div style={{width: "295px", height: "100%", zIndex: 2}}>
+          <Aside />
+      </div>
+      <div style={{height: "100%", width: "100%", display: "flex"}}>
+          <Outlet/>
+      </div>
     </div>
   );
 }
-
-export default App;
