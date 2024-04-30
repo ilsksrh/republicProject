@@ -1,0 +1,222 @@
+#define INTERVALSEND 30000
+#define MINCHANGE 100
+ 
+#include "SoftwareSerial.h"
+SoftwareSerial GPRS(4, 5);
+int onModulePin= 9;
+char aux_str[150];
+char aux;
+char data[512];
+int data_size;
+uint8_t answer=0;
+
+#include "TinyGPS.h"
+TinyGPS gps;
+//Tx, Rx 
+SoftwareSerial gpsSerial(2, 3);
+long lat, lon;
+long endlatsend=0; 
+long endlonsend;
+unsigned long time1,date1;
+unsigned long age;
+bool newdata = false;
+unsigned long millis1=0;
+unsigned long millissend=0;
+unsigned long millisdata=0;
+
+ 
+char apn[]=""; //APN нашего оператора связи
+char url[150];
+String surl="http://***/gps/gps_tracker1.php?id_avto="; //Сюда наше доменное имя
+int id_avto=1; //ID нашего трекера
+ 
+void setup()
+  {
+  GPRS.begin(19200);               // Частота передачи данных GPS   
+  Serial.begin(9600);             // Скорость передачи данных Arduino
+  gpsSerial.begin(9600);
+  Serial.println("Starting...");
+  pinMode(onModulePin,OUTPUT);
+  power_on();
+  delay(3000);
+  sendATcommand("AT", "OK", 2000);
+  delay(3000);
+  // ставим APN, логин и пароль
+  sendATcommand("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"", "OK", 2000);
+  snprintf(aux_str, sizeof(aux_str), "AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
+  sendATcommand(aux_str, "OK", 2000); 
+  }
+ 
+void loop() 
+ {
+    GPRS.end();gpsSerial.begin(9600);
+    while (millis() - millis1 < 2000) 
+      
+      {
+      if (readgps())
+        newdata = true; 
+            }   
+    if (newdata) 
+    
+      {
+      gps.get_position(&lat, &lon, &age);
+      millisdata=millis();
+      Serial.print("lat=");Serial.print(lat);
+      Serial.print("  lon=");Serial.print(lon);   
+      gps.get_datetime(&date1, &time1, &age);
+      Serial.print(" date=");Serial.print(date1);
+      Serial.print("  time=");Serial.println(time1); 
+      newdata=false; 
+      
+      }
+   if(millis()-millissend>INTERVALSEND && millis()-millisdata<INTERVALSEND
+      && abs(lat-endlatsend)>MINCHANGE && abs(lon-endlonsend)>MINCHANGE)
+  if(millis()-millissend>INTERVALSEND && millis()-millisdata<INTERVALSEND
+      && abs(lat-endlatsend)>MINCHANGE && abs(lon-endlonsend)>MINCHANGE
+      )
+     {
+     GPRS.begin(19200);gpsSerial.end();
+     // Инициализируем HTTP сервис
+     answer = sendATcommand("AT+HTTPINIT", "OK", 10000);
+     if (answer == 1)
+       {
+        // Ставим параметр CID
+        answer = sendATcommand("AT+HTTPPARA=\"CID\",1", "OK", 5000);
+        if (answer == 1)
+          {// Определяем URL
+           endlatsend=lat;endlonsend=lon;
+           String surl1=set_url_avto()+"&lat="+String(lat)+"&lon="+String(lon);
+           surl1+="&date="+String(date1)+"&time="+String(time1);
+           surl1.toCharArray(url,surl1.length()+1);
+           snprintf(aux_str, sizeof(aux_str), "AT+HTTPPARA=\"URL\",\"%s\"", url);
+           answer = sendATcommand(aux_str, "OK", 5000);
+           if (answer == 1)
+           
+           {// Запускаем получение данных
+           answer = sendATcommand("AT+HTTPACTION=0", "+HTTPACTION:0,200", 2000);
+           if (answer == 1)
+             {
+             sprintf(aux_str, "AT+HTTPREAD");
+             sendATcommand(aux_str, "OK", 1000);
+               }
+           else
+             {
+             Serial.println("Error getting the url");
+            }
+           }
+         else
+           {
+           Serial.println("Error setting the url");
+           }
+         }
+       else
+         {
+         Serial.println("Error setting the CID");
+         }    
+       }
+    else
+       {
+       Serial.println("Error initializating");
+       }
+    sendATcommand("AT+HTTPTERM", "OK", 5000);
+    millissend=millis();
+    }
+  else
+    Serial.println("data not change!!!");
+  millis1=millis();
+  GPRS.begin(19200);gpsSerial.end();
+  }
+// отправка AT-команд
+int8_t sendATcommand(char* ATcommand, char* expected_answer, unsigned int timeout)
+  {
+   uint8_t x=0,  answer=0;
+   char response[150];
+   unsigned long previous;
+ 
+   memset(response, '\0', 150);    // Инициализируем строку
+   delay(100);
+   while( GPRS.available() > 0) GPRS.read();    // Чистим буфер входа
+   GPRS.println(ATcommand);    // Отправляем AT-команду
+   x = 0;
+   previous = millis();
+   // Ждем ответа
+   do{
+     if(GPRS.available() != 0)
+       {    
+       // Если есть данные в буфере ввода UART, читаем их и проверяем на ответ.
+       response[x] = GPRS.read();
+       //Serial.print(response[x]);
+       x++;
+       // Проверяем на наличие желаемого ответа
+       if (strstr(response, expected_answer) != NULL)    
+         {
+         answer = 1;
+         }
+       }
+    }
+    // Ждем ответ с тайм аутом
+    while((answer == 0) && ((millis() - previous) < timeout));    
+    Serial.println(response);
+        return answer;
+  }
+// программное включение питания
+void power_on()
+  {
+  uint8_t answer=0;
+  pinMode(onModulePin,OUTPUT);
+  // проверяем, включен ли модуль
+  digitalWrite(onModulePin,LOW);
+  delay(1000);
+  digitalWrite(onModulePin,HIGH);
+  delay(2000);
+  digitalWrite(onModulePin,LOW);
+  delay(3000);
+  answer = sendATcommand("AT", "OK", 2000);
+  if (answer == 0)
+    {
+    digitalWrite(onModulePin,LOW);
+    delay(1000);
+    digitalWrite(onModulePin,HIGH);
+    delay(2000);
+    digitalWrite(onModulePin,LOW);
+    delay(3000);
+    digitalWrite(onModulePin,HIGH);
+    delay(3000);
+    digitalWrite(onModulePin,LOW);
+    // ждем ответ от модуля
+    while(answer == 0)
+      {  
+      // Отправляем AT каждые 2 секунды и ждем ответа   
+      answer = sendATcommand("AT", "OK", 2000);    
+      }
+    }
+  }
+// проверка наличия данных gps
+bool readgps() 
+  {
+  while (gpsSerial.available())
+    {
+    int b = gpsSerial.read();
+    if('\r' != b) 
+      {
+      if (gps.encode(b))
+          return true;
+      }
+    }
+  return false;
+  }
+   
+ String set_url_avto()
+  {
+  String surl1;
+  if(digitalRead(14)==1)
+    id_avto=id_avto+1;
+  if(digitalRead(15)==1)
+    id_avto=id_avto+2;
+  if(digitalRead(16)==1)
+    id_avto=id_avto+4;
+  surl1=surl+String(id_avto);
+  Serial.print("surl1=");Serial.println(surl1); 
+  id_avto=1;
+  return surl1; 
+  }
