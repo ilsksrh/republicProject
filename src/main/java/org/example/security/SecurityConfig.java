@@ -1,9 +1,11 @@
 package org.example.security;
 
 
+import io.minio.MinioClient;
 import org.example.security.jwt.AuthEntryPointJwt;
 import org.example.security.jwt.AuthTokenFilter;
 import org.example.security.services.UserDetailsServiceImpl;
+import org.example.service.props.MinioProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +31,12 @@ public class SecurityConfig { // extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
-
+    @Autowired
+    private MinioProperties minioProperties;
+    @Bean
+    public MinioClient minioClient() {
+        return MinioClient.builder().endpoint(minioProperties.getUrl()).credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey()).build();
+    }
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();

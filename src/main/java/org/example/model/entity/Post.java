@@ -23,8 +23,9 @@ public class Post {
     private User user;
     @Column(name = "content")
     private String content;
-    @Column(name="image")
-    private String image;
+    @OneToOne
+    @JoinColumn(name="image_id")
+    private PostImage postImage;
     @OneToMany(mappedBy = "post")
     private List<PostLike> postLikeList;
     @OneToMany(mappedBy = "post")

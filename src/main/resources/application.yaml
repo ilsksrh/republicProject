@@ -2,10 +2,16 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: Damir2005
+    password: '0570'
     url: jdbc:postgresql://localhost:5432/postgres
   jpa:
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  minio:
+    bucket: image
+    url: http://localhost:9000
+    access-key: user
+    secret-key: user
 resqtails.app.jwtSecret: my32characterultrasecureandultralongsecretlklklklkl
 resqtails.app.jwtExpirationMs: 86400000

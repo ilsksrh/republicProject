@@ -22,7 +22,6 @@ public class PostService {
         Post post = new Post();
         post.setUser(userService.getUserById(postDto.getUserId()));
         post.setContent(postDto.getContent());
-        post.setImage(postDto.getImage());
         repository.save(post);
         return "Added";
     }
