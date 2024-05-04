@@ -24,7 +24,7 @@ public class Post {
     @Column(name = "content")
     private String content;
     @OneToOne
-    @JoinColumn(name="image_id")
+    @JoinColumn(name="post_image_id")
     private PostImage postImage;
     @OneToMany(mappedBy = "post")
     private List<PostLike> postLikeList;

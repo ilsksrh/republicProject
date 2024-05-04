@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties("minio")
 public class MinioProperties {
+    @Value("${spring.minio.bucket}")
     private String bucket;
     @Value("${spring.minio.url}")
     private String url;

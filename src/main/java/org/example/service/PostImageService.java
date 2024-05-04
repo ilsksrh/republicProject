@@ -1,13 +1,11 @@
 package org.example.service;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.example.dto.PostImageDto;
+import org.example.model.entity.PostImage;
+import org.example.repository.PostImageRepository;
 import org.example.service.props.MinioProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +15,7 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,10 +23,10 @@ import java.util.UUID;
 public class PostImageService {
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
+    private final PostImageRepository postImageRepository;
 
-    public String upload(PostImageDto image) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public Long upload(MultipartFile file) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         createBucket();
-        MultipartFile file = image.getFile();
         if (file.isEmpty() && file.getOriginalFilename() == null) {
             throw new InvalidParameterException("File is empty");
         }
@@ -39,8 +38,25 @@ public class PostImageService {
             throw new RuntimeException(e);
         }
         saveImage(inputStream, fileName);
-        return fileName;
 
+        PostImage postImage = new PostImage();
+        postImage.setName(fileName);
+        postImage.setType(file.getContentType());
+        postImage.setData(inputStream.readAllBytes());
+        postImageRepository.save(postImage);
+        return postImage.getId();
+    }
+
+    public InputStream getImage(String fileName) {
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(minioProperties.getBucket())
+                            .object(fileName)
+                            .build());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get image from MinIO", e);
+        }
     }
 
     @SneakyThrows
@@ -69,5 +85,7 @@ public class PostImageService {
                         .stream(inputStream, inputStream.available(), -1)
                         .build());
     }
-
+    public PostImage getPostImageById(Long postImageId) {
+        return postImageRepository.findById(postImageId).get();
+    }
 }

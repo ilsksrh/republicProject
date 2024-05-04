@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import io.minio.errors.*;
 import lombok.AllArgsConstructor;
 import org.example.dto.*;
 import org.example.model.entity.*;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -49,15 +52,6 @@ private FileStorageService storageService;
 //    public String addUser(@RequestBody UserDto userDto){
 //        return userService.addUser(userDto);
 //    }
-
-    @GetMapping("/post")
-    public List<Object> getAllPosts(){
-        return postService.getAllPosts();
-    }
-    @PostMapping("/post")
-    public String addPost (@RequestBody PostDto postDto) throws IOException {
-        return postService.addPost(postDto);
-    }
 
     @GetMapping("/lost")
     public List<LostPet> getAllLostPets(){

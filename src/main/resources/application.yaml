@@ -9,9 +9,14 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   minio:
-    bucket: image
+    bucket: postimage
     url: http://localhost:9000
     access-key: user
-    secret-key: user
+    secret-key: Damir2005
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 resqtails.app.jwtSecret: my32characterultrasecureandultralongsecretlklklklkl
 resqtails.app.jwtExpirationMs: 86400000
+
