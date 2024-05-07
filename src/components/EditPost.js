@@ -1,74 +1,77 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import TokenService from '../services/token.service';
-import AuthService from '../services/auth.service';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import authHeader from '../services/auth-header';
 
 const EditPost = () => {
     const { postId } = useParams();
-    const navigate = useNavigate();
-
     const [title, setTitle] = useState('');
     const [photo, setPhoto] = useState('');
     const [description, setDescription] = useState('');
-    const [status, setStatus] = useState('pending');
-    const [type, setType] = useState('post');
+    const [categoryId, setCategoryId] = useState('');
+    const [categories, setCategories] = useState([]);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetchPost(postId); // Fetch post data when component mounts
-    }, [postId]);
+        fetchPost();
+        fetchCategories();
+    }, []);
 
-    const fetchPost = async (id) => {
+    const fetchPost = async () => {
         try {
-            const token = TokenService.getLocalAccessToken();
-            const response = await fetch(`http://localhost:8080/api/posts/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+            const response = await axios.get(`http://localhost:8080/api/posts/${postId}`, {
+                headers: authHeader()
             });
-            if (response.ok) {
-                const postData = await response.json();
-                // Set form fields with existing post data
-                setTitle(postData.title);
-                setPhoto(postData.photo);
-                setDescription(postData.description);
-                setStatus(postData.status);
-                setType(postData.type);
-            } else {
-                console.error('Failed to fetch post:', response.statusText);
-            }
+            const postData = response.data;
+            setTitle(postData.title);
+            setPhoto(postData.photo);
+            setDescription(postData.description);
+            setCategoryId(postData.categoryId);
         } catch (error) {
             console.error('Error fetching post:', error.message);
         }
     };
 
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/categories', {
+                headers: authHeader()
+            });
+            setCategories(response.data);
+        } catch (error) {
+            console.error('Error fetching categories:', error.message);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const userId = JSON.parse(localStorage.getItem('user')).id;
 
         const updatedPost = {
             title,
             photo,
             description,
-            status,
-            type
+            userId,
+            categoryId
         };
 
         try {
-            const token = TokenService.getLocalAccessToken(); // Retrieve access token
             await axios.put(`http://localhost:8080/api/posts/${postId}`, updatedPost, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+                headers: authHeader()
             });
             setError(null);
             console.log('Post updated successfully');
-            navigate("/blog");
+            navigate("/user");
         } catch (error) {
-            setError(error.message);
+            setError('Error updating post. Please try again.');
             console.error('Error updating post:', error);
         }
+    };
+
+    const handleCategoryChange = (e) => {
+        setCategoryId(e.target.value);
+        console.log("category is changed");
     };
 
     return (
@@ -77,7 +80,6 @@ const EditPost = () => {
                 <div className="col-lg-6">
                     <div>
                         <h2 className="text-center mb-4" style={{fontWeight: 'bold', fontSize: '24px'}}>Edit Post</h2>
-
                         {error && <div className="alert alert-danger">{error}</div>}
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
@@ -93,19 +95,11 @@ const EditPost = () => {
                                 <textarea className="form-control" id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="status" className="form-label">Status</label>
-                                <select className="form-select" id="status" value={status} onChange={(e) => setStatus(e.target.value)} required>
-                                    <option value="pending">Pending</option>
-                                    <option value="approved">Approved</option>
-                                    <option value="rejected">Rejected</option>
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="type" className="form-label">Type</label>
-                                <select className="form-select" id="type" value={type} onChange={(e) => setType(e.target.value)} required>
-                                    <option value="post">Post</option>
-                                    <option value="advertisement">Advertisement</option>
-                                    <option value="news">News</option>
+                                <label htmlFor="category" className="form-label">Category</label>
+                                <select className="form-select" id="category" value={categoryId} onChange={handleCategoryChange} required>
+                                    {categories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
                                 </select>
                             </div>
                             <button type="submit" className="btn btn-primary">Update Post</button>

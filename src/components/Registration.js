@@ -8,7 +8,7 @@ export default function Registration() {
     email: '',
     username: '',
     password: '',
-    role: ['user', 'user']
+    role: ['user']
   });
   
   const handleChange = (e) => {

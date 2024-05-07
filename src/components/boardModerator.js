@@ -1,49 +1,46 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
 import UserService from "../services/user.service";
 import EventBus from "../common/EventBus";
 
-export default class BoardModerator extends Component {
-  constructor(props) {
-    super(props);
+const BoardModerator = () => {
+  const [content, setContent] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    this.state = {
-      content: ""
-    };
-  }
-
-  componentDidMount() {
-    UserService.getModeratorBoard().then(
-      response => {
-        this.setState({
-          content: response.data
-        });
-      },
-      error => {
-        this.setState({
-          content:
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString()
-        });
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await UserService.getModeratorBoard();
+        setContent(response.data);
+      } catch (error) {
         if (error.response && error.response.status === 401) {
           EventBus.dispatch("logout");
+        } else {
+          setError(
+            error.response?.data?.message ||
+              error.message ||
+              "An error occurred while fetching data."
+          );
         }
+      } finally {
+        setLoading(false);
       }
-    );
-  }
+    };
 
-  render() {
-    return (
-      <div className="container">
-        <header className="jumbotron">
-          <Link to="/animals">Go to Animals</Link>
-        </header>
-      </div>
-    );
-  }
-}
+    fetchData();
+
+    return () => {
+    };
+  }, []);
+
+  return (
+    <div className="container">
+      <header className="jumbotron">
+        <Link to="/animals">Go to Animals</Link>
+      </header>
+    </div>
+  );
+};
+
+export default BoardModerator;

@@ -35,8 +35,8 @@ const CreatePost = () => {
             title,
             photo,
             description,
-            categoryId,
-            userId
+            userId,
+            categoryId
         };
 
         try {
@@ -48,16 +48,22 @@ const CreatePost = () => {
             setDescription('');
             setError(null);
             console.log('Post created successfully');
-            navigate("/blog");
+            navigate("/user");
         } catch (error) {
-            setError('Error creating post. Please try again.'); // Provide a generic error message
+            setError('Error creating post. Please try again.');
             console.error('Error creating post:', error);
         }
     };
 
     const handleCategoryChange = (e) => {
+        
+        // let e = parseInt(e);
+        console.log(categoryId)
         setCategoryId(e.target.value);
+        e.preventDefault()
     };
+    
+    console.log(categoryId)
 
     return (
         <div className="container">
@@ -81,7 +87,7 @@ const CreatePost = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="category" className="form-label">Category</label>
-                                <select className="form-select" id="category" value={categoryId} onChange={handleCategoryChange} required>
+                                <select className="form-select" id="category" value={parseInt(categoryId)} onChange={handleCategoryChange} required>
                                     <option value="">Select Category</option>
                                     {categories.map(cat => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>

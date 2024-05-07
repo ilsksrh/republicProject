@@ -9,6 +9,8 @@ import Login from "./components/newLogin.js";
 import Register from "./components/Register.js";
 import Registration from "./components/Registration";
 import Home from "./components/Home.js";
+
+
 import Profile from "./components/Profile.js";
 import BoardUser from "./components/boardUser.js";
 import BoardModerator from "./components/boardModerator.js";
@@ -26,6 +28,7 @@ import BlogPage from './components/Blog.js';
 import OnePost from "./components/OnePost.js";
 import CreatePost from "./components/CreatePost.js";
 import EditPost from "./components/EditPost.js";
+import EditProfile from "./components/editProfile.js";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 class App extends Component {
@@ -134,8 +137,8 @@ class App extends Component {
 
         <div className="container mt-3">
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/" element={<CreateForm />} />
+            <Route path="/" element={<Home />}/>
+            <Route path="/home" element={<Home />}/>
             <Route path="/animal/add" element={<CreateForm />} />
             <Route path="/categories" element={<CreateCategories />} />
             <Route path="/categories/create" element={<CreateCategories />} />
@@ -150,13 +153,14 @@ class App extends Component {
             <Route path="/register" element={<Register />} />
             <Route path="/registration" element={<Registration />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/user" element={<BoardUser />} />
+            <Route path="/user" element={<BlogPage />} />
             <Route path="/mod" element={<BoardModerator />} />
             <Route path="/admin" element={<BoardAdmin />} />
-            <Route path="/blog" element={<BlogPage/>} />
+            {/* <Route path="/blog" element={<BlogPage/>} /> */}
             <Route path="/posts/:postId" element={<OnePost/>} />
             <Route path="/post/create" element={<CreatePost/>} />
             <Route path="/posts/:postId/edit" element={<EditPost />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
           </Routes>
         </div>
       </div>
@@ -164,4 +168,104 @@ class App extends Component {
   }
 }
 
+// const routes = createBrowserRouter([
+//   {
+//     element: <Layout />,
+//     children: [
+//   {
+//     path: "/",
+//     element: <Home />
+//   },
+//   {
+//     path: "/",
+//     element: <CreateForm />
+//   },
+//   {
+//     path: "/animal/add",
+//     element: <CreateForm />
+//   },
+//   {
+//     path: "/categories",
+//     element: <CreateCategories />
+//   },
+//   {
+//     path: "/categories/create",
+//     element: <CreateCategories />
+//   },
+//   {
+//     path: "/animals/category/:catId?",
+//     element: <Animals />
+//   },
+//   {
+//     path: "/animals/",
+//     element: <Animals />,
+//     loader: getAllAnimals,
+//     children: [
+//       {
+//         path: "/animals/:animalId",
+//         element: <AnimalItem />,
+//         loader: async ({ params }) => getOneAnimal(params.animalId)
+//       }
+//     ]
+//   },
+//   {
+//     path: "/animals/:animalId",
+//     element: <AnimalItem />
+//   },
+//   {
+//     path: "/animals/:animalId/edit",
+//     element: <EditForm />
+//   },
+//   {
+//     path: "/animal-item",
+//     element: <AnimalItem />
+//   },
+//   {
+//     path: "/login",
+//     element: <Login />
+//   },
+//   {
+//     path: "/register",
+//     element: <Register />
+//   },
+//   {
+//     path: "/registration",
+//     element: <Registration />
+//   },
+//   {
+//     path: "/user",
+//     element: <BoardUser />
+//   },
+//   {
+//     path: "/mod",
+//     element: <BoardModerator />
+//   },
+//   {
+//     path: "/admin",
+//     element: <BoardAdmin />
+//   },
+//   {
+//     path: "/blog",
+//     element: <BlogPage />
+//   },
+//   {
+//     path: "/posts/:postId",
+//     element: <OnePost />
+//   },
+//   {
+//     path: "/post/create",
+//     element: <CreatePost />
+//   },
+//   {
+//     path: "/posts/:postId/edit",
+//     element: <EditPost />
+//   },
+//   {
+//     path: "*",
+//     element: <Page404 />
+//   }
+// ]
+// }
+// ]
+// );
 export default App;

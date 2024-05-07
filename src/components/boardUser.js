@@ -1,49 +1,50 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import UserService from "../services/user.service";
+import { Link } from "react-router-dom";
 import EventBus from "../common/EventBus";
+const BoardUser = () => {
+  const [content, setContent] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-export default class BoardUser extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      content: ""
-    };
-  }
-
-  componentDidMount() {
-    UserService.getUserBoard().then(
-      response => {
-        this.setState({
-          content: response.data
-        });
-      },
-      error => {
-        this.setState({
-          content:
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString()
-        });
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await UserService.getUserBoard();
+        setContent(response.data);
+      } catch (error) {
         if (error.response && error.response.status === 401) {
           EventBus.dispatch("logout");
+        } else {
+          setError(
+            error.response?.data?.message ||
+              error.message ||
+              "An error occurred while fetching data."
+          );
         }
+      } finally {
+        setLoading(false);
       }
-    );
-  }
+    };
 
-  render() {
-    return (
-      <div className="container">
-        <header className="jumbotron">
-        <Link to="/blog">Go to Blog </Link>
-        
-        </header>
-      </div>
-    );
-  }
-}
+    fetchData();
+    return () => {
+    };
+  }, []);
+
+  return (
+    <div className="container">
+      <header className="jumbotron">
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error}</p>
+        ) : (
+          <Link to="/blog">Go to Blog </Link>
+        )}
+      </header>
+    </div>
+  );
+};
+
+export default BoardUser;
