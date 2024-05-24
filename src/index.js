@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import ReactDOM from 'react-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 import News from './News';
@@ -16,84 +16,40 @@ import CreatePost from './CreatePost';
 import SignIn from './auth/SignIn';
 import SignUp from './auth/SignUp';
 import Profile from './Profile';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-const routes = createBrowserRouter(
-    [
-        {
-          path: "/",
-          element: <App />,
-          children: [
-            {
-              path: "/home",
-            },
-            {
-              path: "/news",
-              element: <News />,
-            },
-            {
-              path: "/post",
-              element: <Posts />,
-            },
-            {
-              path: "/",
-            },
-            {
-              path: "/lost",
-              element: <Lost />,
-            },
-            {
-              path: "/create",
-              element: <CreatePost />
-            },
-            {
-              path: "/profile",
-              element: <Profile/> 
-            }
-          ]
-        },
-        {
-          path: "/about",
-          element: <AboutPage />,
-          children: [
-            {
-              path: "/about/",
-              element: <About />
-            },
-            {
-              path: "/about/info",
-              element: <Info />
-            },
-            {
-              path: "/about/lost",
-              element: <LostAbout />
-            }
-          ]
-        },
-        {
-          path: "/news",
-          element: <News />,
-          // loader: async ( {params} ) => {
-          //   return (await NewsService.getNews(params.newsID)).data
-          // }
-        },
-        {
-          path: "/test",
-          element: <Test />
-        },
-        {
-          path: "/login",
-          element: <SignIn/>
-        }
-        ,
-        {
-          path: "/register",
-          element: <SignUp/>
-        }
-    ]
+import EditProfile from './EditProfile';
+import PostOption from './PostOption';
+import Message from './Message';
+import Search from './Search';
+import Chat from './Chat'
+import AddAvatar from './AddAvatar';
+ReactDOM.render(
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />}>
+        <Route path="/home" />
+        <Route path="/news" element={<News />} />
+        <Route path="/post" element={<Posts />}>
+          <Route path="/post/option/:postId" element={<PostOption />} />
+        </Route>
+        <Route path="/lost" element={<Lost />} />
+        <Route path="/create" element={<CreatePost />} />
+        <Route path="/profile" element={<Profile />} >
+        <Route path='/profile/addAvatar' element={<AddAvatar/>}/>
+        </Route>
+        <Route path="/editProfile" element={<EditProfile />} />
+        <Route path='/message' element={<Chat/>}/>
+        <Route path='/search' element={<Search/>}/>
+        <Route path='/chat' element={<Chat/>}/>
+      </Route>
+      <Route path="/about" element={<AboutPage />}>
+        <Route path="/about" element={<About />} />
+        <Route path="/about/info" element={<Info />} />
+        <Route path="/about/lost" element={<LostAbout />} />
+      </Route>
+      <Route path="/test" element={<Test />} />
+      <Route path="/login" element={<SignIn />} />
+      <Route path="/register" element={<SignUp />} />
+    </Routes>
+  </BrowserRouter>,
+  document.getElementById('root')
 );
-
-root.render(
-    <RouterProvider router={routes} />
-)

@@ -59,6 +59,17 @@ body{
   height: 100vh;
   overflow: hidden;
 }
+.login-page-redac {
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85%;
+  height: 100vh;
+  overflow: hidden;
+}
 .form {
   margin: auto;
   width: 400px;
@@ -72,6 +83,20 @@ body{
   text-align: center;
   border-radius: 15px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.searchDiv{
+  display: flex;
+  justify-content: center;
+}
+.addAvatar{
+  z-index: 1;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 .form input {
   font-family: "Poppins", sans-serif;

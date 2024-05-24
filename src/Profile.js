@@ -2,8 +2,7 @@ import './css/profile.css';
 import avatar from './images/user.png';
 import { useEffect, useState } from 'react';
 import { getOneUser } from './api';
-import { Link, useNavigate } from 'react-router-dom';
-
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 export default function Profile() {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
@@ -12,29 +11,39 @@ export default function Profile() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getOneUser(user.id);
-                setUserData(response);
+                if (!user) {
+                    navigate("/about");
+                } else {
+                    const response = await getOneUser(user.id);
+                    setUserData(response);
+                }
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 // Handle error or navigate to another page if needed
             }
         };
-
-        if (!user) {
-            navigate("/about");
-        } else {
-            fetchData();
-        }
-    }, [user, navigate]);
-
+        fetchData()
+    }, [navigate]);
+    console.log(userData)
     return (
         <div className="explore-main">
+            
             {userData && (
                 <div className="profile">
                     <div className="profile-avatar">
-                        <img src={avatar} alt="avatar" className="profile-avatar-image" />
+                    <Link to="/profile/addAvatar">
+                    <img
+  src={
+    userData.image
+      ? `http://localhost:8080/image/${userData.image.name}`
+      : avatar
+  }
+  alt="avatar"
+  className="profile-avatar-image"
+/></Link>
                     </div>
                     <div className="profile-content">
+                        
                         <div className="user">
                             <div className="post-username"><span>{userData.username}</span></div>
                         </div>
@@ -46,10 +55,12 @@ export default function Profile() {
                             <div><span className="name">{userData.username}</span></div>
                             <div>{userData.bio}</div>
                         </div>
+                        <div><Link to='/editProfile' className='edit'>редактировать профиль</Link></div>
                     </div>
                 </div>
             )}
             <div className="explore-header">
+            <Outlet/>
                 <div className="explore-header-container">
                     <div>
                         <Link to="">
@@ -68,16 +79,18 @@ export default function Profile() {
                 </div>
             </div>
             <div className="explore-content">
-                <div className="explore-post">
+                
+                <div className="explore-post" style={{display: "flex" ,flexDirection: "row"}}>
                     {userData && userData.postList ? (
                         userData.postList.map(post => (
-                            <img key={post.id} className="explore-post-img" src={post.image} alt="" />
+                            post.image && <img key={post.id} className="explore-post-img" src={"http://localhost:8080/image/"+post.image.name} alt="" />
                         ))
                     ) : (
                         <p>Loading...</p>
                     )}
                 </div>
             </div>
+            
         </div>
     );
 }

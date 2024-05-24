@@ -15,6 +15,7 @@ export default function SignUp() {
   })
   const [errorMessage, setErrorMessage] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
+  const [confirmError, setConfirmError] = useState('');
   function handle(ex){
       const {name,value}=ex.target;
       setUser({
@@ -25,22 +26,29 @@ export default function SignUp() {
   const handleAdd = async (event) => {
       event.preventDefault();
       const response = await addUser(user);
-      console.log(response.data)
+      console.log(response)
       if(response.success){
-      navigate("/login")}else{
-        if (response.data && response.data.errors) {
-          setErrorMessage(response.data.message);
-          const errors = {};
-          response.data.errors.forEach((error) => {
-            console.log(error.defaultMessage)
-            errors[error.field] = error.defaultMessage;
-          });
-          setValidationErrors(errors);        } else {
-          setErrorMessage('An error occurred. Please try again later.');
-        }
-      }
-      // NotificationManager.success("Student"+user.name+"was added","Add")
+          navigate("/login")}else{
+            if (response.data && response.data.errors) {
+              setErrorMessage(response.data.message);
+              const errors = {};
+              response.data.errors.forEach((error) => {
+                if(error.field){
+                errors[error.field] = error.defaultMessage;}
+                else{
+                  setConfirmError(error.defaultMessage)
+                }
+              });
+              setValidationErrors(errors);        } else if(response.data.field){
+                setValidationErrors({})
+                setErrorMessage({[response.data.field]:response.data.message});                    
+                  }else{
+                    setValidationErrors({})
+            setErrorMessage('An error occurred. Please try again later.');
+          } 
+          }
   }
+  console.log(errorMessage)
   return (
     <div className="login-page">
       <div className="form">
@@ -51,17 +59,22 @@ export default function SignUp() {
             {validationErrors.username && (
             <p style={{ color: 'red' }}>{validationErrors.username}</p>
           )}
+          { errorMessage && (
+          <p style={{ color: 'red' }}>{errorMessage.username}</p>
+        )}
             <input type="email" placeholder="email" name="email" value={user.email || ''} onChange={handle}/>
             {validationErrors.email && (
             <p style={{ color: 'red' }}>{validationErrors.email}</p>
-          )}
+          )}{ errorMessage.email && (
+            <p style={{ color: 'red' }}>{errorMessage.email}</p>
+        )}
             <input type="password" placeholder="password" name="password" value={user.password || ''} onChange={handle}/>
             {validationErrors.password && (
             <p style={{ color: 'red' }}>{validationErrors.password}</p>
           )}
             <input type="password" placeholder="confirmpassword" name="confirmPassword" value={user.confirmPassword || ''} onChange={handle}/>
-            {validationErrors.confirmPassword && (
-            <p style={{ color: 'red' }}>{validationErrors.confirmPassword}</p>
+            {confirmError && (
+            <p style={{ color: 'red' }}>{confirmError}</p>
           )}
             <button type="submit">Создать</button>
             <p className="message">Already registered? <Link to="/login">Sign In</Link></p>
