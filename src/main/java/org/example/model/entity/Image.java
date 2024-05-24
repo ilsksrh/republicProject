@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class PostImage {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,7 +13,5 @@ public class PostImage {
     private String name;
     @Column(name = "type")
     private String type;
-    @Lob
-    private byte[] data;
 
 }

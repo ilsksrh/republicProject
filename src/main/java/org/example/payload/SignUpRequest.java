@@ -22,6 +22,7 @@ public class SignUpRequest {
     @NotBlank(message = "Email не может быть пустым")
     @Email(message = "Email должен быть корректным")
     private String email;
+
     @StrongPassword
     private String password;
 

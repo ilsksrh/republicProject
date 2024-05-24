@@ -1,3 +1,5 @@
+
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -19,4 +21,5 @@ spring:
       max-request-size: 10MB
 resqtails.app.jwtSecret: my32characterultrasecureandultralongsecretlklklklkl
 resqtails.app.jwtExpirationMs: 86400000
-
+server:
+  max-http-request-header-size: 100000

@@ -76,11 +76,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Имя пользователя уже используется!", HttpStatus.OK));
+            return ResponseEntity.badRequest().body(new MessageResponse("username","Имя пользователя уже используется!", HttpStatus.OK));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Адрес электронной почты уже используется.!", HttpStatus.OK));
+            return ResponseEntity.badRequest().body(new MessageResponse("email","Адрес электронной почты уже используется.!", HttpStatus.OK));
         }
         // Create new user's account
         User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
@@ -91,6 +91,6 @@ public class AuthController {
         roles.add(userRole);
         user.setRoles(roles);
         userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!", HttpStatus.OK));
+        return ResponseEntity.ok(new MessageResponse("ok","User registered successfully!", HttpStatus.OK));
     }
 }

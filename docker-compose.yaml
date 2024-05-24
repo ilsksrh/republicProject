@@ -17,3 +17,37 @@ services:
       - '9000:9000'
     volumes:
       - minio-data:/data
+
+  front:
+    image: react
+    container_name: front
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    command: npm start
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - '8080:8080'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresDatabase:5432/postgres
+      - SPRING_DATASOURCE_PASSWORD=saturdaySpring
+      - SPRING_DATASOURCE_USERNAME=postgres
+    depends_on:
+      - postgresDatabase
+
+  postgresDatabase:
+    container_name: postgres_db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: saturdaySpring
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    restart: always

@@ -1,6 +1,8 @@
 package org.example.dto;
 
 import lombok.*;
+import org.example.validate.StrongPassword;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -11,8 +13,8 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String email;
+    @StrongPassword
     private String password;
-    private String role;
-    private String avatar;
+    private MultipartFile avatarFile;
     private String gender;
 }

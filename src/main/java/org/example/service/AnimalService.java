@@ -6,8 +6,10 @@ import org.example.model.entity.Animal;
 import org.example.model.entity.Shelter;
 import org.example.model.entity.User;
 import org.example.repository.AnimalRepository;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -17,7 +19,7 @@ public class AnimalService {
     private final UserService userService;
     private final ShelterService shelterService;
 
-    public String addAnimal(AnimalDto dto){
+    public String addAnimal(AnimalDto dto) throws IOException, ChangeSetPersister.NotFoundException {
         Animal animal = new Animal();
         animal.setNickname(dto.getNickname());
         animal.setSpecies(dto.getSpecies());

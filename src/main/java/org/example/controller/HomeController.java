@@ -6,6 +6,7 @@ import org.example.dto.*;
 import org.example.model.entity.*;
 import org.example.payload.ResponseMessage;
 import org.example.service.*;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -18,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 @RequestMapping("home")
 public class HomeController {
@@ -35,7 +36,6 @@ public class HomeController {
     private final NewsLikeService newsLikeService;
     private final NewsCommentService newsCommentService;
 //    private final WorkTimeService workTimeService;
-private FileStorageService storageService;
 
 
     @GetMapping("/user")
@@ -44,14 +44,26 @@ private FileStorageService storageService;
     }
 
     @GetMapping("/user/{userId}")
-    public User getUser(@PathVariable Long userId){
+    public User getUser(@PathVariable Long userId) throws IOException, ChangeSetPersister.NotFoundException {
         return userService.getUserById(userId);
     }
+    @GetMapping("/users/{username}")
+    public User getUserByUsername(@PathVariable String username) throws IOException, ChangeSetPersister.NotFoundException {
+        return userService.getUserByUsername(username);
+    }
+    @PutMapping("/user/{id}")
+    @ResponseBody
+    public ResponseEntity<ResponseMessage> addUser(@ModelAttribute UserDto userDto, @PathVariable Long id) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException, ChangeSetPersister.NotFoundException {
+        userService.addUserData(userDto,id);
+        return ResponseEntity.ok(new ResponseMessage("User added successfully"));
+    }
 
-//    @PostMapping("/user")
-//    public String addUser(@RequestBody UserDto userDto){
-//        return userService.addUser(userDto);
-//    }
+    @PutMapping("/user/avatar/{id}")
+    public ResponseEntity<ResponseMessage> addAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException, ChangeSetPersister.NotFoundException {
+        userService.addAvatar(file,id);
+        return ResponseEntity.ok(new ResponseMessage("User added successfully"));
+    }
+
 
     @GetMapping("/lost")
     public List<LostPet> getAllLostPets(){
@@ -76,7 +88,7 @@ private FileStorageService storageService;
         return animalService.getAllAnimals();
     }
     @PostMapping("/animal")
-    public String addAnimal(@RequestBody AnimalDto animalDto){
+    public String addAnimal(@RequestBody AnimalDto animalDto) throws IOException, ChangeSetPersister.NotFoundException {
         return animalService.addAnimal(animalDto);
     }
 

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p, u.username, u.avatar FROM Post p JOIN p.user u")
-    List<Object> findAllPostsWithUsernameAndAvatar();
+    @Query("SELECT p, u.firstName,u.lastName,u.image.name,u.id FROM Post p JOIN p.user u")
+    List<Object> findAllPostsWithUserData();
+    List<Post> findAll();
 }

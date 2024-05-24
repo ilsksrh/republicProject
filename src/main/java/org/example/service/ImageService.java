@@ -4,8 +4,9 @@ import io.minio.*;
 import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.example.model.entity.PostImage;
-import org.example.repository.PostImageRepository;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.example.model.entity.Image;
+import org.example.repository.ImageRepository;
 import org.example.service.props.MinioProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,15 +16,14 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PostImageService {
+public class ImageService {
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
-    private final PostImageRepository postImageRepository;
+    private final ImageRepository imageRepository;
 
     public Long upload(MultipartFile file) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         createBucket();
@@ -39,26 +39,49 @@ public class PostImageService {
         }
         saveImage(inputStream, fileName);
 
-        PostImage postImage = new PostImage();
-        postImage.setName(fileName);
-        postImage.setType(file.getContentType());
-        postImage.setData(inputStream.readAllBytes());
-        postImageRepository.save(postImage);
-        return postImage.getId();
+        Image image = new Image();
+        image.setName(fileName);
+        image.setType(file.getContentType());
+        imageRepository.save(image);
+        return image.getId();
     }
 
-    public InputStream getImage(String fileName) {
+    public byte[] getImage(String fileName) throws IOException {
         try {
-            return minioClient.getObject(
+            InputStream inputStream = minioClient.getObject(
                     GetObjectArgs.builder()
                             .bucket(minioProperties.getBucket())
                             .object(fileName)
                             .build());
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        } catch (ErrorResponseException e) {
+            // Handle error when file not found
+            throw new IOException("Image not found: " + fileName, e);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get image from MinIO", e);
+            // Handle other MinIO errors
+            throw new IOException("Failed to get image from MinIO: " + fileName, e);
         }
     }
 
+    public void deleteImage(Image image) {
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(minioProperties.getBucket())
+                            .object(image.getName())
+                            .build());
+            imageRepository.delete(image);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete image from MinIO", e);
+        }
+    }
     @SneakyThrows
     private void createBucket() {
         boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioProperties.getBucket()).build());
@@ -85,7 +108,7 @@ public class PostImageService {
                         .stream(inputStream, inputStream.available(), -1)
                         .build());
     }
-    public PostImage getPostImageById(Long postImageId) {
-        return postImageRepository.findById(postImageId).get();
+    public Image getImageById(Long postImageId) {
+        return imageRepository.findById(postImageId).get();
     }
 }
