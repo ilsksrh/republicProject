@@ -6,7 +6,15 @@ import "../css/profil.css";
 const UserProfile = () => {
   const [redirect, setRedirect] = useState(null);
   const [userReady, setUserReady] = useState(false);
-  const [currentUser, setCurrentUser] = useState({ username: "" });
+  const [currentUser, setCurrentUser] = useState({
+    username: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    avatar: "",
+    phone: "",
+    accessToken: ""
+  });
 
   useEffect(() => {
     const fetchCurrentUser = () => {
@@ -14,6 +22,7 @@ const UserProfile = () => {
       if (!currentUser) {
         setRedirect("/home");
       } else {
+        console.log("Current User:", currentUser); // Debugging
         setCurrentUser(currentUser);
         setUserReady(true);
       }
@@ -31,13 +40,6 @@ const UserProfile = () => {
     return <Navigate to={redirect} />;
   }
 
-  const editProfileMessage = (
-    <p>
-      To fill in your name, surname, or phone number, or change your photo go to edit{" "}
-      
-    </p>
-  );
-
   return (
     <div className="container emp-profile">
       <form method="post">
@@ -45,7 +47,7 @@ const UserProfile = () => {
           <div className="col-md-4">
             <div className="profile-img">
               <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog"
+                src={currentUser.avatar || "https://e7.pngegg.com/pngimages/84/165/png-clipart-united-states-avatar-organization-information-user-avatar-service-computer-wallpaper-thumbnail.png"}
                 alt=""
               />
               <div className="file btn btn-lg btn-primary">
@@ -58,8 +60,6 @@ const UserProfile = () => {
             <div className="profile-head">
               <h5>{currentUser.username}</h5>
               <h6>Top Donators Rank:</h6>
-              {/* Include the edit profile message */}
-              {editProfileMessage}
               <ul className="nav nav-tabs" id="myTab" role="tablist">
                 <li className="nav-item">
                   <a
@@ -84,7 +84,6 @@ const UserProfile = () => {
                     aria-controls="profile"
                     aria-selected="false"
                   >
-                    {/* <Link to = {'/posts/'+post.id + '/edit'}> */}
                     <Link to={"/profile/edit"}>Edit profile</Link>
                   </a>
                 </li>
@@ -128,7 +127,6 @@ const UserProfile = () => {
                     <p>{currentUser.email}</p>
                   </div>
                 </div>
-                {/* Add more fields for saving in the database */}
                 <div className="row">
                   <div className="col-md-6">
                     <label>Token</label>
@@ -141,7 +139,7 @@ const UserProfile = () => {
                               currentUser.accessToken.length - 20
                             )
                           }`
-                        : "Access Token Not Available"}
+                        : 'Access Token Not Available'}
                     </p>
                   </div>
                 </div>

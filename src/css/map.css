@@ -1,0 +1,92 @@
+.background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90vw; /* Changed to 100vw for full width */
+    height: 100vh;
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.5),
+        rgba(0, 0, 0, 0.5)
+      ),
+      url('https://source.unsplash.com/1600x900/?nature');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .search-container {
+    margin-top: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 70%;
+    max-width: 800px; /* Changed from 800x to 800px */
+  }
+  
+  .search-container h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-container input {
+    flex: 1;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .search-container input:focus {
+    outline: none;
+    border-color: #76c76b;
+  }
+  
+  .search-container button {
+    padding: 14px 20px;
+    background-color: #76c76b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-container button:hover {
+    background-color: #4aa844;
+  }
+  
+  .Map-container {
+    width: 90%;
+    height: 70vh;
+    margin-top: 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .Map-container iframe {
+    width: 100%;
+    height: 100%; 
+    border: 0;
+  }
+  

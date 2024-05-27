@@ -15,6 +15,14 @@ export default function OnePost() {
     useEffect(() => {
         fetchPost(postId); 
     }, [postId]);
+
+    useEffect(() => {
+        if (post && currentUser) {
+            const isAuthor = post.user.id === currentUser.id;
+            const isModerator = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR");
+            setIsAuthorOrModerator(isAuthor || isModerator);
+        }
+    }, [post, currentUser]);
     
     const fetchPost = async (id) => {
         try {
@@ -23,22 +31,12 @@ export default function OnePost() {
             });
             if (response.ok) {
                 const postData = await response.json();
-                console.log(postData);
-                console.log(currentUser);
                 setPost(postData);
-                if (currentUser && currentUser.roles && currentUser.roles.length > 0) {
-                    const userRole = currentUser.roles[0];
-                    if (userRole === 'ROLE_MODERATOR') {
-                        setIsAuthorOrModerator(true);
-                        console.log("YES");
-                    }if (userRole === 'ROLE_USER' && currentUser.id == postData.user.id) {
-    
-                        setIsAuthorOrModerator(true);
-                        console.log("YES");
-                    }
-                }
             } else {
                 console.error('Failed to fetch post:', response.statusText);
+                if (response.status === 401) {
+                    navigate('/unauthorized'); // Redirect to unauthorized page or handle as needed
+                }
             }
         } catch (error) {
             console.error('Error fetching post:', error.message);
@@ -56,6 +54,9 @@ export default function OnePost() {
                 navigate('/user');
             } else {
                 console.error('Failed to delete post:', response.statusText);
+                if (response.status === 401) {
+                    navigate('/unauthorized'); // Redirect to unauthorized page or handle as needed
+                }
             }
         } catch (error) {
             console.error('Error deleting post:', error.message);
@@ -80,14 +81,11 @@ export default function OnePost() {
                         <figure className="mb-4"><img className="img-fluid rounded" src={post.photo} alt="..." /></figure>
                         <section className="mb-5">
                             <p className="fs-5 mb-4">{post.description}</p>
-                            {post && (
-                                <p className="fs-5 mb-4">Author: {post.user.username}</p>
-                            )}
-
+                            <p className="fs-5 mb-4">Author: {post.user.username}</p>
                             {isAuthorOrModerator && (
                                 <>
                                     <button className="btn btn-primary me-2">
-                                        <Link to={`/posts/${post.id}/edit`}>Edit</Link>
+                                        <Link to={`/posts/${post.id}/edit`} className="text-white text-decoration-none">Edit</Link>
                                     </button>
                                     <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
                                 </>

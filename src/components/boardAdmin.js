@@ -1,48 +1,58 @@
-import React, { Component } from "react";
-
+import React, { useState, useEffect } from "react";
 import UserService from "../services/user.service";
 import EventBus from "../common/EventBus";
+import { Link } from "react-router-dom";
+import "../css/boardAdmin.css"; // Import your CSS file
 
-export default class BoardAdmin extends Component {
-  constructor(props) {
-    super(props);
+const BoardAdmin = () => {
+  const [content, setContent] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    this.state = {
-      content: ""
-    };
-  }
-
-  componentDidMount() {
-    UserService.getAdminBoard().then(
-      response => {
-        this.setState({
-          content: response.data
-        });
-      },
-      error => {
-        this.setState({
-          content:
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString()
-        });
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await UserService.getAdminBoard();
+        setContent(response.data);
+      } catch (error) {
         if (error.response && error.response.status === 401) {
           EventBus.dispatch("logout");
+        } else {
+          setError(
+            error.response?.data?.message ||
+              error.message ||
+              "An error occurred while fetching data."
+          );
         }
+      } finally {
+        setLoading(false);
       }
-    );
-  }
+    };
 
-  render() {
-    return (
-      <div className="container">
-        <header className="jumbotron">
-          <h3>{this.state.content}</h3>
-        </header>
-      </div>
-    );
-  }
-}
+    fetchData();
+
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
+
+  return (
+    <div className="container">
+      <header className="jumbotron">
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error}</p>
+        ) : (
+          <>
+            <Link to="/calendar">Go to calendar</Link>
+            <br />
+            <Link to="/map">See animals on the map</Link>
+          </>
+        )}
+      </header>
+    </div>
+  );
+};
+
+export default BoardAdmin;

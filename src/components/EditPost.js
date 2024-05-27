@@ -24,10 +24,19 @@ const EditPost = () => {
                 headers: authHeader()
             });
             const postData = response.data;
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+
+            // Check if the user is the owner of the post or a moderator
+            if (postData.userId !== currentUser.id && !currentUser.roles.includes('ROLE_MODERATOR')) {
+                setError('You do not have permission to edit this post.');
+                return;
+            }
+
+            console.log('Fetched post data:', postData); // Debugging
             setTitle(postData.title);
             setPhoto(postData.photo);
             setDescription(postData.description);
-            setCategoryId(postData.categoryId);
+            setCategoryId(postData.category.id);
         } catch (error) {
             console.error('Error fetching post:', error.message);
         }
@@ -38,6 +47,7 @@ const EditPost = () => {
             const response = await axios.get('http://localhost:8080/api/categories', {
                 headers: authHeader()
             });
+            console.log('Fetched categories:', response.data); // Debugging
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error.message);
@@ -46,13 +56,13 @@ const EditPost = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const userId = JSON.parse(localStorage.getItem('user')).id;
+        const currentUser = JSON.parse(localStorage.getItem('user'));
 
         const updatedPost = {
             title,
             photo,
             description,
-            userId,
+            userId: currentUser.id,
             categoryId
         };
 
@@ -71,7 +81,7 @@ const EditPost = () => {
 
     const handleCategoryChange = (e) => {
         setCategoryId(e.target.value);
-        console.log("category is changed");
+        console.log("Category changed to:", e.target.value);
     };
 
     return (
@@ -81,29 +91,32 @@ const EditPost = () => {
                     <div>
                         <h2 className="text-center mb-4" style={{fontWeight: 'bold', fontSize: '24px'}}>Edit Post</h2>
                         {error && <div className="alert alert-danger">{error}</div>}
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <label htmlFor="title" className="form-label">Title</label>
-                                <input type="text" className="form-control" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="photo" className="form-label">Photo URL</label>
-                                <input type="url" className="form-control" id="photo" value={photo} onChange={(e) => setPhoto(e.target.value)} required />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="description" className="form-label">Description</label>
-                                <textarea className="form-control" id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="category" className="form-label">Category</label>
-                                <select className="form-select" id="category" value={categoryId} onChange={handleCategoryChange} required>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <button type="submit" className="btn btn-primary">Update Post</button>
-                        </form>
+                        {!error && (
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="title" className="form-label">Title</label>
+                                    <input type="text" className="form-control" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="photo" className="form-label">Photo URL</label>
+                                    <input type="url" className="form-control" id="photo" value={photo} onChange={(e) => setPhoto(e.target.value)} required />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="description" className="form-label">Description</label>
+                                    <textarea className="form-control" id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="category" className="form-label">Category</label>
+                                    <select className="form-select" id="category" value={categoryId} onChange={handleCategoryChange} required>
+                                        {!categoryId && <option value="">Select a category</option>}
+                                        {categories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button type="submit" className="btn btn-primary">Update Post</button>
+                            </form>
+                        )}
                     </div>
                 </div>
             </div>

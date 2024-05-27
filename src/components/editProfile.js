@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
+import authHeader from '../services/auth-header';
 
 const EditProfile = () => {
     const navigate = useNavigate();
@@ -17,12 +18,12 @@ const EditProfile = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchUserProfile(); // Fetch user profile data when component mounts
+        fetchUserProfile();
     }, []);
 
     const fetchUserProfile = async () => {
         try {
-            const currentUser = AuthService.getCurrentUser(); // Get current user
+            const currentUser = AuthService.getCurrentUser();
             setUser({
                 username: currentUser.username,
                 email: currentUser.email,
@@ -40,10 +41,12 @@ const EditProfile = () => {
         e.preventDefault();
 
         try {
-            await axios.put('/api/users/profile', user);
+            await axios.put('http://localhost:8080/api/users/profile', user, {
+                headers: authHeader()
+            });
             setError(null);
             console.log('User profile updated successfully');
-            navigate("/profile"); // Redirect to profile page
+            navigate("/profile");
         } catch (error) {
             setError(error.message);
             console.error('Error updating user profile:', error);

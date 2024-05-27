@@ -1,0 +1,185 @@
+.calendar-container {
+  font-family: Arial, sans-serif;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.calendar {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  background-color: #76c76b;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.month-select,
+.year-input {
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  background-color: #76c76b;
+  color: #fff;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.year-input {
+  width: 70px;
+}
+
+.month-select {
+  width: 150px;
+}
+
+.month-select:focus,
+.year-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.day-name {
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-day {
+  background: #a8e4a0;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.calendar-day:hover {
+  background: #76c76b;
+  transform: scale(1.05);
+}
+
+.selected {
+  background: #76c76b;
+  border-radius: 50%;
+}
+
+.special-date {
+  border-radius: 8px;
+}
+
+.plan-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  background-color: #ff6347;
+  border-radius: 50%;
+}
+
+.has-plans {
+  border-radius: 50%;
+}
+
+.selected-date-info {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #4a4a4a;
+}
+
+.selected-date-info p {
+  margin-bottom: 10px;
+}
+
+.selected-date-info p:last-child {
+  margin-bottom: 0;
+}
+
+.selected-date-info p.no-plans {
+  color: #ff6347;
+}
+
+.button-container {
+  margin-top: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #76c76b;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #4aa844;
+}
+
+.selected-date-info button {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.selected-date-info button:hover {
+  background-color: #45a049;
+}
+
+.delete-button {
+  background-color: transparent;
+  border: none;
+  color: #ff6347;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: color 0.2s ease;
+}
+
+.delete-button:hover {
+  color: #ff0000;
+}
+
+.plan-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.plan-item p {
+  margin: 0;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}

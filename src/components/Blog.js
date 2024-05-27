@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import authHeader from '../services/auth-header';
 import AuthService from "../services/auth.service";
+import '../css/blog.css'; 
 
 export default function Blog() {
     const [posts, setPosts] = useState([]);
@@ -10,6 +11,7 @@ export default function Blog() {
     const [userId, setUserId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const currentUser = AuthService.getCurrentUser();
+    const isModerator = currentUser && currentUser.roles.includes('ROLE_MODERATOR');
 
     useEffect(() => {
         fetchPosts();
@@ -25,7 +27,7 @@ export default function Blog() {
                 url += `?userId=${userId}`;
             } else if (searchTerm) {
                 url += `?keyword=${searchTerm}`;
-                console.log("sent")
+                console.log("sent");
             }
             const response = await fetch(url, {
                 method: 'GET',
@@ -48,8 +50,7 @@ export default function Blog() {
     const fetchCategories = async () => {
         try {
             const response = await fetch('http://localhost:8080/api/categories', {
-                headers:
-                    authHeader()
+                headers: authHeader()
             });
             if (response.ok) {
                 const data = await response.json();
@@ -116,7 +117,6 @@ export default function Blog() {
         setSearchTerm(searchValue); // Update the searchTerm state with the searchValue
         fetchPosts(searchValue);
     };
-    
 
     return (
         <div>
@@ -155,31 +155,31 @@ export default function Blog() {
                         <div className="card mb-4">
                             <div className="card-header">Search</div>
                             <div className="card-body">
-                                    <form onSubmit={(e) => {
-                                        e.preventDefault();
-                                        const formData = new FormData(e.target);
-                                        const searchValue = formData.get('searchTerm');
-                                        handleSearch(searchValue);
-                                    }}>
-                                        <div className="input-group">
-                                            <input 
-                                                className="form-control" 
-                                                type="text" 
-                                                name="searchTerm" // Add name attribute to the input field
-                                                placeholder="Enter search term..." 
-                                                aria-label="Enter search term..." 
-                                                aria-describedby="button-search" 
-                                            />
-                                            <button 
-                                                className="btn btn-primary" 
-                                                id="button-search" 
-                                                type="submit" // Change the type to submit
-                                            >
-                                                Go!
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    const formData = new FormData(e.target);
+                                    const searchValue = formData.get('searchTerm');
+                                    handleSearch(searchValue);
+                                }}>
+                                    <div className="input-group">
+                                        <input 
+                                            className="form-control" 
+                                            type="text" 
+                                            name="searchTerm" // Add name attribute to the input field
+                                            placeholder="Enter search term..." 
+                                            aria-label="Enter search term..." 
+                                            aria-describedby="button-search" 
+                                        />
+                                        <button 
+                                            className="btn btn-primary" 
+                                            id="button-search" 
+                                            type="submit" // Change the type to submit
+                                        >
+                                            Go!
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                         {/* <!-- Categories widget--> */}
                         <div className="card mb-4">
@@ -192,35 +192,39 @@ export default function Blog() {
                                                 <li key={category.id}>
                                                     <span>{category.name}</span>
                                                     <button 
-                                                        onClick={() => deleteCategory(category.id)} 
-                                                        className="btn btn-danger btn-sm ml-2"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                    <button 
                                                         onClick={() => handleShowCategoryPosts(category.id)} 
                                                         className="btn btn-primary btn-sm ml-2"
                                                     >
                                                         Show
                                                     </button>
+                                                    {isModerator && (
+                                                        <button 
+                                                            onClick={() => deleteCategory(category.id)} 
+                                                            className="btn btn-danger btn-sm ml-2"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
                                                 </li>
                                             ))}
                                         </ul>
                                     </div>
                                     {/* Add new category */}
-                                    <div className="col-sm-6">
-                                        <form onSubmit={(e) => {
-                                            e.preventDefault();
-                                            const formData = new FormData(e.target);
-                                            const name = formData.get('name');
-                                            createCategory({ name });
-                                        }}>
-                                            <div className="form-group">
-                                                <input type="text" name="name" className="form-control" placeholder="New category name" required />
-                                            </div>
-                                            <button type="submit" className="btn btn-primary">Create</button>
-                                        </form>
-                                    </div>
+                                    {isModerator && (
+                                        <div className="col-sm-6">
+                                            <form onSubmit={(e) => {
+                                                e.preventDefault();
+                                                const formData = new FormData(e.target);
+                                                const name = formData.get('name');
+                                                createCategory({ name });
+                                            }}>
+                                                <div className="form-group">
+                                                    <input type="text" name="name" className="form-control" placeholder="New category name" required />
+                                                </div>
+                                                <button type="submit" className="btn btn-primary">Create</button>
+                                            </form>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
