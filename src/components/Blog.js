@@ -11,7 +11,7 @@ export default function Blog() {
     const [userId, setUserId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const currentUser = AuthService.getCurrentUser();
-    const isModerator = currentUser && currentUser.roles.includes('ROLE_MODERATOR');
+    const isModerator = currentUser &&  currentUser.roles && currentUser.roles.includes('ROLE_MODERATOR');
 
     useEffect(() => {
         fetchPosts();

@@ -27,7 +27,7 @@ const EditPost = () => {
             const currentUser = JSON.parse(localStorage.getItem('user'));
 
             // Check if the user is the owner of the post or a moderator
-            if (postData.userId !== currentUser.id && !currentUser.roles.includes('ROLE_MODERATOR')) {
+            if (postData.user.id!== currentUser.id && !currentUser.roles.includes('ROLE_MODERATOR')) {
                 setError('You do not have permission to edit this post.');
                 return;
             }

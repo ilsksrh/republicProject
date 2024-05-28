@@ -46,6 +46,7 @@ const EditProfile = () => {
             });
             setError(null);
             console.log('User profile updated successfully');
+            AuthService.updateUser(user);
             navigate("/profile");
         } catch (error) {
             setError(error.message);

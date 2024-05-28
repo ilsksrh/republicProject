@@ -35,6 +35,9 @@ class AuthService {
     return TokenService.getUser();
   }
 
+  updateUser(user) {
+    TokenService.updateUser(user);
+  }
   
 }
 

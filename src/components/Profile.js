@@ -12,29 +12,57 @@ const UserProfile = () => {
     firstName: "",
     lastName: "",
     avatar: "",
-    phone: "",
-    accessToken: ""
+    phone: ""
   });
 
   useEffect(() => {
-    const fetchCurrentUser = () => {
+    const fetchCurrentUser = async () => {
       const currentUser = AuthService.getCurrentUser();
       if (!currentUser) {
         setRedirect("/home");
       } else {
-        console.log("Current User:", currentUser); // Debugging
-        setCurrentUser(currentUser);
-        setUserReady(true);
+        try {
+          const response = await fetch(`http://localhost:8080/api/users/${currentUser.id}`, {
+            headers: {
+              Authorization: `Bearer ${currentUser.accessToken}`
+            }
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+          const userData = await response.json();
+          setCurrentUser({
+            username: userData.username,
+            email: userData.email,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            avatar: userData.avatar,
+            phone: userData.phone
+          });
+          console.log(userData);
+          console.log(currentUser)
+          setUserReady(true);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          setRedirect("/home");
+        }
       }
     };
 
     fetchCurrentUser();
 
-    // Clean up function to cancel any pending requests or timers
     return () => {
-      // Implement any cleanup logic here if necessary
+      // Cleanup logic if necessary
     };
   }, []);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Handle file upload logic here if needed
+      // Example: Upload to server and get the URL, then update currentUser state
+    }
+  };
 
   if (redirect) {
     return <Navigate to={redirect} />;
@@ -47,12 +75,15 @@ const UserProfile = () => {
           <div className="col-md-4">
             <div className="profile-img">
               <img
-                src={currentUser.avatar || "https://e7.pngegg.com/pngimages/84/165/png-clipart-united-states-avatar-organization-information-user-avatar-service-computer-wallpaper-thumbnail.png"}
+                src={
+                  currentUser.avatar ||
+                  "https://e7.pngegg.com/pngimages/84/165/png-clipart-united-states-avatar-organization-information-user-avatar-service-computer-wallpaper-thumbnail.png"
+                }
                 alt=""
               />
               <div className="file btn btn-lg btn-primary">
                 Change Photo
-                <input type="file" name="file" />
+                <input type="file" name="file" onChange={handleFileChange} />
               </div>
             </div>
           </div>
@@ -129,14 +160,38 @@ const UserProfile = () => {
                 </div>
                 <div className="row">
                   <div className="col-md-6">
+                    <label>First Name</label>
+                  </div>
+                  <div className="col-md-6">
+                    <p>{currentUser.firstName}</p>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <label>Last Name</label>
+                  </div>
+                  <div className="col-md-6">
+                    <p>{currentUser.lastName}</p>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <label>Phone</label>
+                  </div>
+                  <div className="col-md-6">
+                    <p>{currentUser.phone}</p>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
                     <label>Token</label>
                   </div>
                   <div className="col-md-6">
                     <p>
-                      {currentUser.accessToken
-                        ? `${currentUser.accessToken.substring(0, 20)} ... ${
-                            currentUser.accessToken.substr(
-                              currentUser.accessToken.length - 20
+                      {AuthService.getCurrentUser()?.accessToken
+                        ? `${AuthService.getCurrentUser().accessToken.substring(0, 20)} ... ${
+                            AuthService.getCurrentUser().accessToken.substr(
+                              AuthService.getCurrentUser().accessToken.length - 20
                             )
                           }`
                         : 'Access Token Not Available'}
