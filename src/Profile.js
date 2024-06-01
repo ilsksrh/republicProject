@@ -8,16 +8,22 @@ const Profile = () => {
   const [redirect, setRedirect] = useState(null);
   const [userReady, setUserReady] = useState(false);
   const [currentUser, setCurrentUser] = useState({ username: "" });
+  const [user, setUser] = useState("")
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
       const user = getCurrentUser();
+      console.log(user)
       if (!user) {
         setRedirect("/home");
       } else {
         try {
           const userInfo = await getUserInfo(user.id);
+          const currentUserInfo = await getCurrentUser()
+
           setCurrentUser(userInfo);
+          setUser(currentUserInfo)
+          console.log("44", userInfo)
           setUserReady(true);
         } catch (error) {
           console.error("Error fetching user info:", error);
@@ -83,8 +89,17 @@ const Profile = () => {
                 <p class="mb-0">Email</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0">{currentUser.email}</p>
+                <p class="text-muted mb-0">{user.email}</p>
               </div>
+            </div>
+            <hr/>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{currentUser.phone}</p>
+              </div>    
             </div>
             <hr/>
 
@@ -93,7 +108,7 @@ const Profile = () => {
                 <p class="mb-0">Token</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0">{currentUser.accessToken}</p>
+                <p class="text-muted mb-0">{user.accessToken}</p>
               </div>    
             </div>
             

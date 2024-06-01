@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { authHeader } from './services/auth_service';
+import { authHeader } from '../services/auth_service';
+
 const CreatePost = () => {
     const [title, setTitle] = useState('');
     const [photo, setPhoto] = useState('');
@@ -47,7 +48,7 @@ const CreatePost = () => {
             setDescription('');
             setError(null);
             console.log('Post created successfully');
-            navigate("/user");
+            navigate("/home");
         } catch (error) {
             setError('Error creating post. Please try again.');
             console.error('Error creating post:', error);
@@ -93,7 +94,7 @@ const CreatePost = () => {
                                     ))}
                                 </select>
                             </div>
-                            <button type="submit" className="btn btn-primary">Create Post</button>
+                            <button type="submit" className="btn btn-success">Create Post</button>
                         </form>
                     </div>
                 </div>

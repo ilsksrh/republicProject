@@ -22,12 +22,9 @@ import youtube from './images/youtube.png';
 
 
 const Main = () => {
-    const [content, setContent] = useState('');
     const [fotoIndex, setFotoIndex] = useState(0);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const fotos = [foto1, foto2, foto3, foto4];
-  
-    
+
   
     useEffect(() => {
       const interval = setInterval(() => {

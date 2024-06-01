@@ -1,139 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCurrentUser } from './services/auth_service';
-import { authHeader } from './services/auth_service';
+import { fetchCategories, fetchPosts } from './services/api';
+import search from "./images/search-heart.svg"
 
 export default function Home() {
-    const [posts, setPosts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-    const [userId, setUserId] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const currentUser = getCurrentUser();
+  const [posts, setPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const currentUser = getCurrentUser();
 
-    useEffect(() => {
-        fetchPosts();
-        fetchCategories();
-    }, [selectedCategoryId, userId, searchTerm]);
+  useEffect(() => {
+    loadCategories();
+    loadPosts();
+  }, []);
 
-    const fetchPosts = async () => {
-        try {
-            let url = 'http://localhost:8080/api/posts';
-            if (selectedCategoryId) {
-                url += `?categoryId=${selectedCategoryId}`;
-            } else if (userId) {
-                url += `?userId=${userId}`;
-            } else if (searchTerm) {
-                url += `?keyword=${searchTerm}`;
-                console.log("sent")
-            }
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    ...authHeader()
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                const filteredPosts = data.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()));
-                setPosts(filteredPosts);
-            } else {
-                console.error('Failed to fetch posts:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching posts:', error.message);
-        }
-    };
+  useEffect(() => {
+    loadPosts();
+  }, [selectedCategoryId, userId, searchTerm]);
 
-    const fetchCategories = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/categories', {
-                headers:
-                    authHeader()
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setCategories(data);
-            } else {
-                console.error('Failed to fetch categories:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching categories:', error.message);
-        }
-    };
+  const loadCategories = async () => {
+    try {
+      const catData = await fetchCategories();
+      setCategories(catData);
+    } catch (error) {
+      console.error('Error fetching categories:', error.message);
+    }
+  };
 
-    const createCategory = async (categoryData) => {
-        try {
-            const response = await fetch('http://localhost:8080/api/categories', {
-                method: 'POST',
-                headers: {
-                    ...authHeader(),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(categoryData),
-            });
-            if (response.ok) {
-                fetchCategories();
-            } else {
-                console.error('Failed to create category:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error creating category:', error.message);
-        }
-    };
+  const loadPosts = async () => {
+    try {
+      const postData = await fetchPosts(selectedCategoryId, userId, searchTerm);
+      setPosts(postData);
+    } catch (error) {
+      console.error('Error fetching posts:', error.message);
+    }
+  };
 
-    const deleteCategory = async (categoryId) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/categories/${categoryId}`, {
-                method: 'DELETE',
-                headers: authHeader()
-            });
-            if (response.ok) {
-                fetchCategories();
-            } else {
-                console.error('Failed to delete category:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error deleting category:', error.message);
-        }
-    };
+  const handleShowMyPosts = () => {
+    setUserId(currentUser.id);
+    setSelectedCategoryId(null);
+    setSearchTerm('');
+  };
 
-    const handleShowMyPosts = (userId) => {
-        setUserId(userId);
-        setSelectedCategoryId(null);
-        setSearchTerm('');
-    };
+  const handleShowAllPosts = () => {
+    setUserId(null);
+    setSelectedCategoryId(null);
+    setSearchTerm('');
+  };
 
-    const handleShowCategoryPosts = (categoryId) => {
-        setSelectedCategoryId(categoryId);
-        setUserId(null);
-        setSearchTerm('');
-    };
+  const handleShowCategoryPosts = (categoryId) => {
+    setSelectedCategoryId(categoryId);
+    setUserId(null);
+    setSearchTerm('');
+  };
 
-    const handleSearch = (searchValue) => {
-        setSelectedCategoryId(null);
-        setUserId(null);
-        setSearchTerm(searchValue); 
-        fetchPosts(searchValue);
-    };
-    
-
+  const handleSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    setSelectedCategoryId(null);
+    setUserId(null);
+  };
+  const reset = () => {
+    window.location.reload();
+  }
     return (
         <div>
-            <div className="container pt-4">
+            <div className="container p-4">
+            <div className='mb-4 d-flex'>
+                <button onClick={() => handleShowMyPosts(currentUser.id)} className="btn btn-success" style={{ marginRight: '10px' }}>My Posts</button>
+                <div className='pl-4'>
+                    <button onClick={() => {
+                        setSelectedCategoryId(null);
+                        setUserId(null);
+                        setSearchTerm('');
+                    }} className="btn btn-success">All Posts</button>
+                </div>
+            </div>
+
                 <div className="row">
                     <div className="col-lg-8">
-                        
                         <div className="row">
                             {posts.length === 0 ? (
                                 <div className="col-lg-12">
-                                    <p>No posts</p>
+                                    <p>No posts yet</p>
                                 </div>
                             ) : (
                                 posts.map(post => (
-                                    <div className="col-lg-4 col-md-6 mb-4" key={post.id}>
-                                        <div className="card">
-                                            
+                                    <div className="col-lg-6" key={post.id}>
+                                        <div className="card mb-4">
                                             <img className="card-img-top" src={post.photo} alt="Post" />
                                             <div className="card-body">
                                                 <div className="small text-muted">{post.createdAt}</div>
@@ -147,108 +103,63 @@ export default function Home() {
                             )}
                         </div>
                     </div>
-
                     <div className="col-lg-4">
                         <div className="card mb-4">
                             <div className="card-header">Search</div>
                             <div className="card-body">
-                                    <form onSubmit={(e) => {
-                                        e.preventDefault();
-                                        const formData = new FormData(e.target);
-                                        const searchValue = formData.get('searchTerm');
-                                        handleSearch(searchValue);
-                                    }}>
-                                        <div className="input-group">
-                                            <input 
-                                                className="form-control" 
-                                                type="text" 
-                                                name="searchTerm" 
-                                                placeholder="Enter search term..." 
-                                                aria-label="Enter search term..." 
-                                                aria-describedby="button-search" 
-                                                />
-                                            <button 
-                                                className="btn btn-primary" 
-                                                id="button-search" 
-                                                type="submit" 
-                                                >
-                                                Go!
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    const formData = new FormData(e.target);
+                                    const searchValue = formData.get('searchTerm');
+                                    handleSearch(searchValue);
+                                }}>
+                                    <div className="input-group">
+                                        <input 
+                                            className="form-control rounded " 
+                                            type="text" 
+                                            name="searchTerm" 
+                                            placeholder="Enter search term..." 
+                                            aria-label="Enter search term..." 
+                                            aria-describedby="button-search" 
+                                        />
+                                        <button 
+                                            className="btn btn-light" 
+                                            id="button-search" 
+                                            type="submit" 
+                                            >
+                                            <img src = {search}></img>
+                                        </button>
+                                    </div>
+                                  
+                                </form>
+                            </div>
                         </div>
-                        {/* <!-- Categories widget--> */}
                         <div className="card mb-4">
                             <div className="card-header">Categories</div>
                             <div className="card-body">
                                 <div className="row">
-                                    <div className="col-sm-6">
                                         <ul className="list-unstyled mb-0">
                                             {categories.map(category => (
                                                 <li key={category.id}>
-                                                    <span>{category.name}</span>
-                                                    <button 
-                                                        onClick={() => deleteCategory(category.id)} 
-                                                        className="btn btn-danger btn-sm ml-2"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleShowCategoryPosts(category.id)} 
-                                                        className="btn btn-primary btn-sm ml-2"
-                                                    >
-                                                        Show
-                                                    </button>
+                                                    <button className='btn btn-success btn-light' onClick={() => handleShowCategoryPosts(category.id)}>{category.name}</button>
                                                 </li>
                                             ))}
                                         </ul>
-                                    </div>
-                                    {/* Add new category */}
-                                    <div className="col-sm-6">
-                                        <form onSubmit={(e) => {
-                                            e.preventDefault();
-                                            const formData = new FormData(e.target);
-                                            const name = formData.get('name');
-                                            createCategory({ name });
-                                        }}>
-                                            <div className="form-group">
-                                                <input type="text" name="name" className="form-control" placeholder="New category name" required />
-                                            </div>
-                                            <button type="submit" className="btn btn-primary">Create</button>
-                                        </form>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        {/* Show my posts button */}
-                        <button onClick={() => handleShowMyPosts(currentUser.id)} className="btn btn-primary">Show My Posts</button>
-                        <button onClick={() => {
-                            setSelectedCategoryId(null);
-                            setUserId(null);
-                            setSearchTerm('');
-                        }} className="btn btn-primary">Show All Posts</button>
-                        {/* <!-- Side widget--> */}
+
+                        
                         <div className="card mb-4">
-                            <div className="card-header">Side Widget</div>
-                            <Link to={`/createPost`} className="btn btn-primary">Create Post</Link>
+                            <Link to={`/createPost`} className="btn btn-success">Create Post</Link>
+                        </div>
+                        <div>
+                            <button className='btn btn-light' onClick={reset}>Reset</button>
                         </div>
                     </div>
                 </div>
             </div>
-            {/* Pagination */}
-            <nav aria-label="Pagination">
-                <hr className="my-0" />
-                <ul className="pagination justify-content-center my-4">
-                    <li className="page-item disabled"><a className="page-link" href="#" tabIndex="-1" aria-disabled="true">Newer</a></li>
-                    <li className="page-item active" aria-current="page"><a className="page-link" href="#!">1</a></li>
-                    <li className="page-item"><a className="page-link" href="#!">2</a></li>
-                    <li className="page-item"><a className="page-link" href="#!">3</a></li>
-                    <li className="page-item disabled"><a className="page-link" href="#!">...</a></li>
-                    <li className="page-item"><a className="page-link" href="#!">15</a></li>
-                    <li className="page-item"><a className="page-link" href="#!">Older</a></li>
-                </ul>
-            </nav>
+            
         </div>
     );
 }

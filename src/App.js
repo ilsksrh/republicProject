@@ -12,8 +12,10 @@ import EditProfile from "./editProfile";
 import AdminBoard from "./AdminBoard";
 import Header from "./Header";
 import Home from "./Home";
-import CreatePost from "./CreatePost";
 import ModBoard from "./ModeratorBoard";
+import CreatePost from "./posts/CreatePost";
+import OnePost from "./posts/onePost";
+import EditPost from "./posts/editPost";
 
 const App = () => {
   return (
@@ -25,9 +27,12 @@ const App = () => {
         <Route path = "/profile" element = {<Profile/>} />
         <Route path = "edit" element = {<EditProfile />} />
         <Route path = "/admin" element = {<AdminBoard />} />
+        <Route path="/posts/:postId" element={<OnePost />} />
         <Route path = "/home" element = {<Home />} />
         <Route path = "/createPost" element = {<CreatePost />} />
         <Route path = "/mod" element = {<ModBoard />} />
+        <Route path="/posts/:postId/edit" element={<EditPost />} />
+
       </Routes>
   );
 };

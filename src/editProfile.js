@@ -7,7 +7,6 @@ import { authHeader } from './services/auth_service';
 const EditProfile = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({
-        username: '',
         email: '',
         firstName: '',
         lastName: '',
@@ -16,29 +15,9 @@ const EditProfile = () => {
     });
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchUserProfile();
-        console.log(user.username)
+ 
 
-    }, []);
 
-    const fetchUserProfile = async () => {
-        try {
-            const currentUser = getCurrentUser(); 
-            if (currentUser) {
-                setUser({
-                    username: currentUser.username,
-                    email: currentUser.email,
-                    firstName: currentUser.firstName,
-                    lastName: currentUser.lastName,
-                    avatar: currentUser.avatar,
-                    phone: currentUser.phone
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching user profile:', error.message);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,7 +38,7 @@ const EditProfile = () => {
     };
 
     return (
-        <div className="container">
+        <div className="container  pt-4">
             <div className="row justify-content-center">
                 <div className="col-lg-6">
                     <div>
@@ -83,7 +62,7 @@ const EditProfile = () => {
                                 <label htmlFor="phone" className="form-label">Phone</label>
                                 <input type="text" className="form-control" id="phone" value={user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} required />
                             </div>
-                            <button type="submit" className="btn btn-primary">Update Profile</button>
+                            <button type="submit" className="btn btn-outline-success">Update Profile</button>
                         </form>
                     </div>
                 </div>

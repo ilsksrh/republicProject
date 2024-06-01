@@ -3,6 +3,8 @@ import { getLocalAccessToken } from './token.service';
 
 const API_URL = 'http://localhost:8080/api';
 const CATEGORY_API_URL = '/categories';
+const POSTS_API_URL = '/posts';
+
 
 const getHeaders = () => {
   const token = getLocalAccessToken();
@@ -104,6 +106,47 @@ export const deleteCategory = async (categoryId) => {
     throw error;
   }
 };
+
+export const editCategory = async (categoryId, data) => {
+  try {
+    const response = await put(`${CATEGORY_API_URL}/${categoryId}`, data );
+    return response.data;
+  } catch (error) {
+    console.error('Error editing category:', error.message);
+    throw error;
+  }
+};
+
+
+export const fetchPosts = async (categoryId = null, userId = null, searchTerm = '') => {
+  try {
+    let url = POSTS_API_URL;
+    const params = [];
+    if (categoryId) {
+      params.push(`categoryId=${categoryId}`);
+    }
+    if (userId) {
+      params.push(`userId=${userId}`);
+    }
+    if (searchTerm) {
+      params.push(`keyword=${searchTerm}`);
+    }
+    if (params.length > 0) {
+      url += '?' + params.join('&');
+    }
+    return await get(url);
+  } catch (error) {
+    console.error("Error fetching posts:", error.message);
+    throw error;
+  }
+};
+
+
+// export const editCategory = async () => {
+//   try{
+//     return await put()
+//   }
+// }
 
 export const getUserInfo = async (userId) => {
   try {

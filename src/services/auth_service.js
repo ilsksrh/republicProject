@@ -35,10 +35,12 @@ export const getCurrentUser = () => {
 };
 
 export const authHeader = () => {
-  const user = getCurrentUser();
-  if (user && user.token) {
-      return { Authorization: 'Bearer ' + user.token };
+  
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  if (user && user.accessToken) {
+    return { Authorization: 'Bearer ' + user.accessToken };
   } else {
-      return {};
+    return {};
   }
-};
+}

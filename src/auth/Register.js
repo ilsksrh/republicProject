@@ -131,7 +131,7 @@ const Register = () => {
             {error && <div style={{ color: 'red' }} className="text-center pt-4">{error}</div>}
           <div className="pt-4">
 
-          {loading ? <div className="text-center pt-4">Loading...</div > : <button className="btn btn-primary btn-block">Login</button>}
+          {loading ? <div className="text-center pt-4">Loading...</div > : <button className="btn btn-success btn-block">Register</button>}
           </div>
           </form>
         )}
