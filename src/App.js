@@ -16,6 +16,7 @@ import ModBoard from "./ModeratorBoard";
 import CreatePost from "./posts/CreatePost";
 import OnePost from "./posts/onePost";
 import EditPost from "./posts/editPost";
+import ModUsers from "./ModUsers";
 
 const App = () => {
   return (
@@ -32,6 +33,8 @@ const App = () => {
         <Route path = "/createPost" element = {<CreatePost />} />
         <Route path = "/mod" element = {<ModBoard />} />
         <Route path="/posts/:postId/edit" element={<EditPost />} />
+        <Route path ="/mod/users" element={<ModUsers />} />
+        
 
       </Routes>
   );

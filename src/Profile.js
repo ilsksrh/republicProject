@@ -47,7 +47,7 @@ const Profile = () => {
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
-            <img src= {currentUser.avatar} alt="avatar"
+            <img src= {currentUser.avatar} alt="no avatar"
               class="rounded-circle img-fluid" />
             <h5 class="my-3">{currentUser.username}</h5>
             <p class="text-muted mb-1">It's me!</p>

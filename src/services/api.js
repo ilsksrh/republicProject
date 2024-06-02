@@ -141,6 +141,23 @@ export const fetchPosts = async (categoryId = null, userId = null, searchTerm = 
   }
 };
 
+export const fetchAllUsers = async () => {
+  try {
+    return await get('/users/all');
+  } catch (error) {
+    console.error("Error fetching users:", error.message);
+    throw error;
+  }
+};
+
+export const deleteUser = async (username) => {
+  try {
+    return await del(`/users/${username}`)
+  }catch (error) {
+    console.log("Error delete user", error.message)
+    throw error
+  }
+}
 
 // export const editCategory = async () => {
 //   try{

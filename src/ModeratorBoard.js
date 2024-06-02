@@ -3,6 +3,7 @@ import { CheckMod } from "./services/checkRole";
 import { fetchCategories, createCategory, deleteCategory, editCategory } from "./services/api";
 import x from "./images/x-circle.svg";
 import pen from "./images/pen-fill.svg";
+import { Link } from "react-router-dom";
 
 const ModBoard = () => {
   const [categories, setCategories] = useState([]);
@@ -42,6 +43,11 @@ const ModBoard = () => {
   return (
     <div className="container py-5 h-100">
       <div className="row d-flex justify-content-center align-items-center h-100">
+      <div className="">
+                      <button className="btn btn-light"><Link to="/mod/users">
+                        Go to Users System
+                      </Link></button>
+                    </div>
         <div className="col-lg-8 col-xl-6">
           <div className="d-flex justify-content-between">
             <div className="card rounded-3">
