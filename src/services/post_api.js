@@ -1,4 +1,9 @@
 import { authHeader } from "./auth_service";
+import axios from "axios";
+import { useNavigate } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export const fetchOnePost = async (id) => {
     try {
@@ -12,6 +17,8 @@ export const fetchOnePost = async (id) => {
         } 
     } catch (error) {
         console.error('Error fetching post:', error.message);
+        toast.error("Error fetch post")
+
     }
 };
 
@@ -22,10 +29,32 @@ export const deletePost = async (postId) => {
             headers: authHeader()
         });
         if (response.ok) {
-            console.log('Post deleted successfully');
-            // navigate('/user');
+            toast.success('Post deleted successfully');
         }
     } catch (error) {
         console.error('Error deleting post:', error.message);
+        toast.error("Error delete post")
+
+    }
+};
+
+export const createPost = async (title, photo, description, categoryId) => {
+    const userId = JSON.parse(localStorage.getItem('user')).id;
+    const newPost = {
+        title,
+        photo,
+        description,
+        userId,
+        categoryId
+    };
+    try {
+        const response = await axios.post('http://localhost:8080/api/posts', newPost, {
+            headers: authHeader()
+        });
+        if(response.ok){
+            toast.success('Post created successfully');
+        }
+    } catch (error) {
+        toast.error("Error create post")
     }
 };

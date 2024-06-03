@@ -27,7 +27,7 @@ const Header = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand navbar-dark bg-dark">
+    <nav className="navbar navbar-expand navbar-dark bg-dark d-flex justify-content-around">
       <Link to={"/"} className="navbar-brand">
         ResQ Tails
       </Link>
@@ -54,15 +54,8 @@ const Header = () => {
           </li>
         )}
 
-        {currentUser && (
-          <li className="nav-item">
-            <Link to={"/user"} className="nav-link">
-              User
-            </Link>
-          </li>
-        )}
       </div>
-
+      <div>
       {currentUser ? (
         <div className="navbar-nav ml-auto">
           <li className="nav-item">
@@ -91,6 +84,7 @@ const Header = () => {
           </li>
         </div>
       )}
+      </div>
     </nav>
   );
 };

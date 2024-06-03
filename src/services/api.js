@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { getLocalAccessToken } from './token.service';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const API_URL = 'http://localhost:8080/api';
 const CATEGORY_API_URL = '/categories';
@@ -91,6 +93,7 @@ export const fetchCategories = async () => {
 
 export const createCategory = async (categoryData) => {
   try {
+    toast.success("created nice")
     return await post(CATEGORY_API_URL, categoryData);
   } catch (error) {
     console.error("Error creating category:", error.message);
@@ -100,6 +103,7 @@ export const createCategory = async (categoryData) => {
 
 export const deleteCategory = async (categoryId) => {
   try {
+    toast.success("deleted nice")
     return await del(`${CATEGORY_API_URL}/${categoryId}`);
   } catch (error) {
     console.error("Error deleting category:", error.message);
@@ -159,11 +163,7 @@ export const deleteUser = async (username) => {
   }
 }
 
-// export const editCategory = async () => {
-//   try{
-//     return await put()
-//   }
-// }
+
 
 export const getUserInfo = async (userId) => {
   try {

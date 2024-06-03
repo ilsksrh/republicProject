@@ -1,44 +1,48 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { authHeader } from "../services/auth_service";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { deletePost, fetchOnePost } from "../services/post_api";
-import { CheckAdmin, CheckMod } from "../services/checkRole";
 import { getCurrentUser } from "../services/auth_service";
+
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 
 export default function OnePost() {
   const [post, setPost] = useState('');
   const { postId } = useParams();
-
   const currentUser = getCurrentUser();
   const [isAuthorOrModerator, setIsAuthorOrModerator] = useState(false);
   
+  const navigate= useNavigate()
+
   useEffect(() => {
-    // fetchPost(postId)
     fetchOnePost(postId).then((postData) => {
-      setPost(postData);
-      console.log(postData);
-      console.log("hi")
-      console.log(postData.user?.username)
+      const toastEditPost = localStorage.getItem("toastEditPost")
+      if (toastEditPost) {
+        toast.success("Successfully edited post!");
+        localStorage.removeItem("toastEditPost");
+      }
+      setPost(postData)
     });
   }, [postId]);
 
   useEffect(() => {
     if (post && currentUser) {
         const isAuthor = post.user.id === currentUser.id;
-        const isModerator = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR");
-        setIsAuthorOrModerator(isAuthor || isModerator);
+        const isModerator = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR")
+        setIsAuthorOrModerator(isAuthor || isModerator)
     }
 }, [post, currentUser]);
 
   const handleDelete = () => {
     deletePost(postId).then(() => {
+      navigate("/home")
+    
     })
   }
 
- 
 
   return (
     <div className="container mt-5">
@@ -79,6 +83,7 @@ export default function OnePost() {
           </article>
         </div>
       </div>
+      <ToastContainer/>
     </div>
-  );
+  )
 }

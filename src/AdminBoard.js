@@ -6,7 +6,6 @@ import { CheckAdmin } from "./services/checkRole";
 
 
 const AdminBoard = () => {
-    //check admin role
     const check = CheckAdmin();
     useEffect(() => {
         check();

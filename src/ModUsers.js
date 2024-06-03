@@ -1,6 +1,7 @@
 import React from "react";
 import { fetchAllUsers, deleteUser } from "./services/api";
 import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 const ModUsers = () => {
   const [users, setUsers] = useState([]);
@@ -20,6 +21,7 @@ const ModUsers = () => {
 
   const handleDelete = async (username) => {
     try {
+      toast.success("deleted nice")
       await deleteUser(username);
       setUsers((prevUsers) => prevUsers.filter((user) => user.username !== username));
     } catch (error) {
@@ -82,9 +84,7 @@ const ModUsers = () => {
                             />
                           )}
                         </div>
-                        {/* <Link to={`/users/${user.id}`} className="btn btn-outline-success mt-3">
-                          View Profile →
-                        </Link> */}
+                      
                       </li>
                     </ul>
                   </div>
@@ -94,6 +94,7 @@ const ModUsers = () => {
           </div>
         ))
       )}
+      <ToastContainer/>
     </div>
   );
 };

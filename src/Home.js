@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "./services/auth_service";
 import { fetchCategories, fetchPosts } from "./services/api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import search from "./images/search-heart.svg";
 
 export default function Home() {
@@ -12,7 +15,14 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const currentUser = getCurrentUser();
 
+
+
   useEffect(() => {
+    const showToastCreatePost = localStorage.getItem("showToastCreatePost");
+    if (showToastCreatePost) {
+      toast.success("Successfully created post!");
+      localStorage.removeItem("showToastCreatePost");
+    }
     loadCategories();
     loadPosts();
   }, []);
@@ -101,11 +111,26 @@ export default function Home() {
                 posts.map((post) => (
                   <div className="col-lg-6" key={post.id}>
                     <div className="card mb-4">
-                      <img
-                        className="card-img-top"
-                        src={post.photo}
-                        alt="Post"
-                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: 200,
+                        }}
+                      >
+                        <img
+                          className="card-img-top"
+                          src={post.photo}
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            width: "auto",
+                            height: "auto",
+                          }}
+                          alt="Post"
+                        />
+                      </div>
                       <div className="card-body">
                         <div className="small text-muted">{post.createdAt}</div>
                         <h2 className="card-title h4">{post.title}</h2>
@@ -123,6 +148,7 @@ export default function Home() {
               )}
             </div>
           </div>
+
           <div className="col-lg-4">
             <div className="card mb-4">
               <div className="card-header">Search</div>
@@ -188,6 +214,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
