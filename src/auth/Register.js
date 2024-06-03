@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { isEmail } from "validator";
 import animalsImage from '../images/animals.png';
-import { registerUser } from "../services/api";
+import { register } from "../services/auth_service";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -58,7 +58,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await registerUser(formData);
+      const response = await register(formData);
       setSuccessMessage(response.data.message);
       setError("");
     } catch (error) {

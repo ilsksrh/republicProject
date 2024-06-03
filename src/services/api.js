@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { getLocalAccessToken } from './token.service';
 
-const API_URL = 'http://localhost:8080/api';
-const CATEGORY_API_URL = '/categories';
-const POSTS_API_URL = '/posts';
-
-
 const getHeaders = () => {
   const token = getLocalAccessToken();
   if (token) {
@@ -16,7 +11,7 @@ const getHeaders = () => {
 
 export const get = async (url) => {
   try {
-    const response = await axios.get(API_URL + url, { headers: getHeaders() });
+    const response = await axios.get(url, { headers: getHeaders() });
     return response.data;
   } catch (error) {
     console.error('GET request error:', error);
@@ -26,7 +21,7 @@ export const get = async (url) => {
 
 export const post = async (url, data) => {
   try {
-    const response = await axios.post(API_URL + url, data, { headers: getHeaders() });
+    const response = await axios.post(url, data, { headers: getHeaders() });
     return response.data;
   } catch (error) {
     console.error('POST request error:', error);
@@ -36,7 +31,7 @@ export const post = async (url, data) => {
 
 export const put = async (url, data) => {
   try {
-    const response = await axios.put(API_URL + url, data, { headers: getHeaders() });
+    const response = await axios.put(url, data, { headers: getHeaders() });
     return response.data;
   } catch (error) {
     console.error('PUT request error:', error);
@@ -46,7 +41,7 @@ export const put = async (url, data) => {
 
 export const del = async (url) => {
   try {
-    const response = await axios.delete(API_URL + url, { headers: getHeaders() });
+    const response = await axios.delete(url, { headers: getHeaders() });
     return response.data;
   } catch (error) {
     console.error('DELETE request error:', error);
@@ -54,73 +49,9 @@ export const del = async (url) => {
   }
 };
 
-const authHeader = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (user && user.token) {
-    return { Authorization: 'Bearer ' + user.token };
-  } else {
-    return {};
-  }
-}
-
-export const registerUser = async (formData) => {
-  try {
-    const response = await axios.post('http://localhost:8080/api/auth/signup', formData, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeader()
-      }
-    });
-
-    return response;
-  } catch (error) {
-    console.error('Error registering user:', error);
-    throw error;
-  }
-}
-
-export const fetchCategories = async () => {
-  try {
-    return await get(CATEGORY_API_URL);
-  } catch (error) {
-    console.error("Error fetching categories:", error.message);
-    throw error;
-  }
-};
-
-export const createCategory = async (categoryData) => {
-  try {
-    return await post(CATEGORY_API_URL, categoryData);
-  } catch (error) {
-    console.error("Error creating category:", error.message);
-    throw error;
-  }
-};
-
-export const deleteCategory = async (categoryId) => {
-  try {
-    return await del(`${CATEGORY_API_URL}/${categoryId}`);
-  } catch (error) {
-    console.error("Error deleting category:", error.message);
-    throw error;
-  }
-};
-
-export const editCategory = async (categoryId, data) => {
-  try {
-    const response = await put(`${CATEGORY_API_URL}/${categoryId}`, data );
-    return response.data;
-  } catch (error) {
-    console.error('Error editing category:', error.message);
-    throw error;
-  }
-};
-
-
 export const fetchPosts = async (categoryId = null, userId = null, searchTerm = '') => {
   try {
-    let url = POSTS_API_URL;
+    let url = 'http://localhost:8080/api/posts';
     const params = [];
     if (categoryId) {
       params.push(`categoryId=${categoryId}`);
@@ -141,37 +72,11 @@ export const fetchPosts = async (categoryId = null, userId = null, searchTerm = 
   }
 };
 
-
-// export const editCategory = async () => {
-//   try{
-//     return await put()
-//   }
-// }
-
 export const getUserInfo = async (userId) => {
   try {
-    return await get(`/users/${userId}`);
+    return await get(`http://localhost:8080/api/users/${userId}`);
   } catch (error) {
     console.error('Error fetching user info:', error.message);
     throw error;
   }
 };
-
-
-
-
-// export const doLogin = async (username, password) => {
-//   try {
-//     const response = await axios.post('http://localhost:8080/api/auth/signin', {
-//       username: username,
-//       password: password
-//     }, {
-//       headers: authHeader()
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error logging in:', error);
-//     throw error;
-//   }
-// }
-

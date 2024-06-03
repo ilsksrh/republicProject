@@ -1,11 +1,10 @@
 import { post } from './api';
 import { setUser, removeUser } from './token.service';
-
-const API_URL = '/auth/';
+import axios from 'axios';
 
 export const login = async (username, password) => {
   try {
-    const response = await post(API_URL + 'signin', { username, password });
+    const response = await post('http://localhost:8080/api/auth/signin', { username, password });
     if (response.accessToken) {
       setUser(response);
     }
@@ -16,19 +15,25 @@ export const login = async (username, password) => {
   }
 };
 
+export const register = async (formData) => {
+  try {
+    const response = await axios.post('http://localhost:8080/api/auth/signup', formData, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeader()
+      }
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
+}
+
 export const logout = () => {
   removeUser();
 };
-
-// export const register = async (username, email, password, confirmPassword) => {
-//   try {
-//     const response = await post(API_URL + 'signup', { username, email, password, confirmPassword });
-//     return response;
-//   } catch (error) {
-//     console.error('Error registering user:', error);
-//     throw error;
-//   }
-// };
 
 export const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem('user'));

@@ -15,15 +15,26 @@ const EditProfile = () => {
     });
     const [error, setError] = useState(null);
 
- 
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const currentUser = await getCurrentUser();
+                setUser(currentUser);
+            } catch (error) {
+                setError(error.response?.data?.message || error.message);
+                console.error('Error fetching user data:', error);
+            }
+        };
 
+        fetchUser();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.put(
+            await axios.put(
                 'http://localhost:8080/api/users/profile',
                 user,
                 { headers: authHeader() }
