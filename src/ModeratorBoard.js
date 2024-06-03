@@ -8,11 +8,13 @@ import {  fetchCategories, createCategory, deleteCategory, editCategory } from '
 import { deleteTag, createTag, getAllTags, addTagToPost, editTag, deleteTagFromPost, getTagsForPost } from "./services/tags_api";
 import x from "./images/x-circle.svg";
 import pen from "./images/pen-fill.svg";
+import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 const ModBoard = () => {
   const [categories, setCategories] = useState([]);
   const [editId, setEditId] = useState(null);
-  const [editName, setEditName] = useState('');
+  const [editName, setEditName] = useState("");
 
   const [tags, setTags] = useState([]);
   const [editTagId, setEditTagId] = useState(null);
@@ -64,7 +66,7 @@ const ModBoard = () => {
       setEditId(null);
       loadCategories();
     } catch (error) {
-      console.error('Failed to edit category:', error.message);
+      console.error("Failed to edit category:", error.message);
     }
   };
 
@@ -86,14 +88,22 @@ const ModBoard = () => {
     <div>
     <div className="container py-5 h-100">
       <div className="row d-flex justify-content-center align-items-center h-100">
+        <div className="">
+          <Link to="/mod/users">
+            <button className="btn btn-light">Go to Users System</button>{" "}
+          </Link>
+        </div>
         <div className="col-lg-8 col-xl-6">
           <div className="d-flex justify-content-between">
             <div className="card rounded-3">
               <div className="card-body p-4 p-md-5">
                 <div className="">
                   <ul className="list-unstyled">
-                    {categories.map(category => (
-                      <div key={category.id} className="d-flex justify-content-between pt-2">
+                    {categories.map((category) => (
+                      <div
+                        key={category.id}
+                        className="d-flex justify-content-between pt-2"
+                      >
                         <li>
                           {editId === category.id ? (
                             <input
@@ -108,12 +118,18 @@ const ModBoard = () => {
                         </li>
                         <div className="d-flex justify-content-center pr-2">
                           {editId === category.id ? (
-                            <button className="btn btn-success btn-sm ml-2" onClick={() => handleSaveClick(category.id)}>
+                            <button
+                              className="btn btn-success btn-sm ml-2"
+                              onClick={() => handleSaveClick(category.id)}
+                            >
                               Save
                             </button>
                           ) : (
                             <>
-                              <button className="btn btn-primary btn-sm ml-2" onClick={() => handleEditClick(category)}>
+                              <button
+                                className="btn btn-primary btn-sm ml-2"
+                                onClick={() => handleEditClick(category)}
+                              >
                                 <img src={pen} className="d-flex" alt="Edit" />
                               </button>
                               <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteCategory(category.id).then(() => loadCategories())}>
@@ -239,6 +255,7 @@ const ModBoard = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
     </div>
     

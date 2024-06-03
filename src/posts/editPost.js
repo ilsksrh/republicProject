@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authHeader } from '../services/auth_service';
+import { fetchCategories } from '../services/api';
+import { fetchOnePost } from '../services/post_api';
+import { getCurrentUser } from '../services/auth_service';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 const EditPost = () => {
@@ -13,48 +19,32 @@ const EditPost = () => {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    
+    const currentUser = getCurrentUser();
+    
+    const loadCategories = async () => {
+        const catData = await fetchCategories();
+        setCategories(catData);
+      };  
+    
     useEffect(() => {
-        fetchPost();
-        fetchCategories();
+        loadPost();
+        loadCategories();
     }, []);
     
-    const fetchPost = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/posts/${postId}`, {
-                headers: authHeader()
-            });
-            const postData = response.data;
-            const currentUser = JSON.parse(localStorage.getItem('user'));
-            console.log(postData)
-            console.log(currentUser)
-            
+    const loadPost = async () => {
+            fetchOnePost(postId).then((postData) => {
             if (postData.user?.id !== currentUser.id && !currentUser.roles.includes('ROLE_MODERATOR')) {
                 setError('You do not have permission to edit this post.');
                 return;
             }
-            
-            console.log('Fetched post data:', postData); // Debugging
             setTitle(postData.title);
             setPhoto(postData.photo);
             setDescription(postData.description);
             setCategoryId(postData.category.id);
-        } catch (error) {
-            console.error('Error fetching post:', error.message);
-        }
+        }) 
     };
 
-    const fetchCategories = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/categories', {
-                headers: authHeader()
-            });
-            // console.log('Fetched categories:', response.data); // Debugging
-            setCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching categories:', error.message);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -73,11 +63,12 @@ const EditPost = () => {
                 headers: authHeader()
             });
             setError(null);
-            console.log('Post updated successfully');
-            navigate("/home");
+            localStorage.setItem("toastEditPost",true)
+            navigate(`/posts/${postId}`)
         } catch (error) {
             setError('Error updating post. Please try again.');
             console.error('Error updating post:', error);
+            toast.error("Error updating post")
         }
     };
 
@@ -87,7 +78,7 @@ const EditPost = () => {
     };
 
     return (
-        <div className="container">
+        <div className="container mt-5">
             <div className="row justify-content-center">
                 <div className="col-lg-6">
                     <div>
@@ -116,12 +107,13 @@ const EditPost = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <button type="submit" className="btn btn-primary">Update Post</button>
+                                <button type="submit" className="btn btn-success">Update Post</button>
                             </form>
                         )}
                     </div>
                 </div>
             </div>
+            <ToastContainer/>
         </div>
     );
 };

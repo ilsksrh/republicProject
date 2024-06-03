@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { authHeader } from "../services/auth_service";
 import { useParams } from "react-router";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { deletePost, fetchOnePost } from "../services/post_api";
 import { getCurrentUser } from "../services/auth_service";
-
-import { addExistingTagForPost, getPostsbyTag, getAllTags, addTagToPost, editTag, deleteTagFromPost, getTagsForPost } from "../services/tags_api";
-import redHeart from "../images/like.jpg";
-import blackHeart from "../images/unlike.jpg";
-import x from "../images/x-circle.svg";
-import pen from "../images/pen-fill.svg";
 
 
 export default function OnePost() {
@@ -21,108 +17,33 @@ export default function OnePost() {
 
   const { postId } = useParams();
   const currentUser = getCurrentUser();
-  const navigate = useNavigate();
 
-  const loadTags = async () => {
-    try {
-      const tagsData = await getAllTags();
-      setAllTags(Array.isArray(tagsData) ? tagsData : []);
-    } catch (error) {
-      console.error('Error fetching categories:', error.message);
-      setAllTags([]);
-    }
-  };
-
+  
   useEffect(() => {
-    async function fetchPostAndTags() {
-      try {
-        const postData = await fetchOnePost(postId);
-        setPost(postData);
-        const tagData = await getTagsForPost(postId);
-        setTags(tagData);
-        const allTagsData = await getAllTags();
-        setAllTags(allTagsData);
-      } catch (error) {
-        console.error("Error fetching post or tags:", error.message);
-      }
-    }
-
-    fetchPostAndTags();
-    loadTags();
+    // fetchPost(postId)
+    fetchOnePost(postId).then((postData) => {
+      setPost(postData);
+      console.log(postData);
+      console.log("hi")
+      console.log(postData.user?.username)
+    });
   }, [postId]);
 
 
   useEffect(() => {
     if (post && currentUser) {
-      const isAuthor = post.user.id === currentUser.id;
-      const isMod = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR");
-      setIsAuthorOrModerator(isAuthor || isMod);
-      setIsModerator(isMod);
+        const isAuthor = post.user.id === currentUser.id;
+        const isModerator = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR");
+        setIsAuthorOrModerator(isAuthor || isModerator);
     }
   }, [post, currentUser]);
 
-  const handleDelete = async () => {
-    try {
-      await deletePost(postId);
-      navigate("/home");
-    } catch (error) {
-      if (error.message.includes('401')) {
-        navigate('/unauthorized');
-      } else {
-        console.error("Error deleting post:", error.message);
-      }
-    }
-  };
+  const handleDelete = () => {
+    deletePost(postId).then(() => {
+    })
+  }
 
-  const handleShowTagsPosts = async (postId) => {
-    try {
-      const tags = await getTagsForPost(postId);
-      setTags(tags)
-    } catch (error) {
-      if (error.message.includes('401')) {
-        navigate('/unauthorized');
-      } else {
-        console.error("Error showing tags for post:", error.message);
-      }
-      console.log("success")
-    }
-  };
-
-  const handleAddTag = async () => {
-    const tagNames = allTags.map(tag => tag.name);
-    const tagName = prompt(`Enter the tag name from the list: \n${tagNames.join("\n")}`);
-    if (tagName) {
-      const selectedTag = allTags.find(tag => tag.name === tagName);
-      if (selectedTag) {
-        const tagExists = tags.some(tag => tag.id === selectedTag.id);
-        if (tagExists) {
-          setMessage({ text: `Tag "${tagName}" is already set for this post.`, type: "error" });
-        } else {
-          try {
-            await addExistingTagForPost(postId, selectedTag.id);
-            const updatedTags = await getTagsForPost(postId);
-            setTags(updatedTags);
-            setMessage({ text: `Tag "${tagName}" added successfully.`, type: "success" });
-          } catch (error) {
-            console.error("Error adding existing tag:", error.message);
-          }
-        }
-      } else {
-        setMessage({ text: `Tag "${tagName}" is wrong.`, type: "error" });
-      }
-    }
-  };
-
-  const handleDeleteTag = async (tagId, tagName) => {
-    try {
-      await deleteTagFromPost(postId, tagId);
-      const updatedTags = await getTagsForPost(postId);
-      setTags(updatedTags);
-      setMessage({ text: `Tag "${tagName}" deleted successfully.`, type: "success" });
-    } catch (error) {
-      console.error("Error deleting tag:", error.message);
-    }
-  };
+ 
 
   return (
     <div className="container mt-5">
@@ -197,6 +118,7 @@ export default function OnePost() {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
-  );
+  )
 }

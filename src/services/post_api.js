@@ -1,4 +1,9 @@
 import { authHeader } from "./auth_service";
+import axios from "axios";
+import { useNavigate } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export const fetchOnePost = async (postId) => {
   try {
@@ -21,59 +26,38 @@ export const fetchOnePost = async (postId) => {
 };
 
 export const deletePost = async (postId) => {
-  try {
-    const response = await fetch(`http://localhost:8080/api/posts/${postId}`, {
-      method: 'DELETE',
-      headers: authHeader()
-    });
+    try {
+        const response = await fetch(`http://localhost:8080/api/posts/${postId}`, {
+            method: 'DELETE',
+            headers: authHeader()
+        });
+        if (response.ok) {
+            toast.success('Post deleted successfully');
+        }
+    } catch (error) {
+        console.error('Error deleting post:', error.message);
+        toast.error("Error delete post")
 
-    if (!response.ok) {
-      throw new Error(`Failed to delete post: ${response.statusText}`);
     }
-
-    console.log('Post deleted successfully');
-    return true;
-  } catch (error) {
-    console.error('Error deleting post:', error.message);
-    throw error;
-  }
 };
 
-
-export const likePost = async (userId, postId) => {
-  try {
-    const response = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
-      method: 'POST',
-      headers: authHeader(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to like post');
+export const createPost = async (title, photo, description, categoryId) => {
+    const userId = JSON.parse(localStorage.getItem('user')).id;
+    const newPost = {
+        title,
+        photo,
+        description,
+        userId,
+        categoryId
+    };
+    try {
+        const response = await axios.post('http://localhost:8080/api/posts', newPost, {
+            headers: authHeader()
+        });
+        if(response.ok){
+            toast.success('Post created successfully');
+        }
+    } catch (error) {
+        toast.error("Error create post")
     }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error liking post:', error.message);
-    throw error;
-  }
-};
-
-export const unlikePost = async (userId, postId) => {
-  try {
-    const response = await fetch(`http://localhost:8080/api/users/${userId}/unlike/${postId}`, {
-      method: 'POST',
-      headers: authHeader(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to unlike post');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error unliking post:', error.message);
-    throw error;
-  }
 };

@@ -26,7 +26,7 @@ const Header = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand navbar-dark bg-dark">
+    <nav className="navbar navbar-expand navbar-dark bg-dark d-flex justify-content-around">
       <Link to={"/"} className="navbar-brand">
         ResQ Tails
       </Link>
@@ -55,7 +55,7 @@ const Header = () => {
           </li>
         )}
       </div>
-
+      <div>
       {currentUser ? (
         <div className="navbar-nav ml-auto">
           <div>
@@ -88,6 +88,7 @@ const Header = () => {
           </li>
         </div>
       )}
+      </div>
     </nav>
   );
 }

@@ -3,7 +3,9 @@ import { isEmail } from "validator";
 import animalsImage from '../images/animals.png';
 import { register } from "../services/auth_service";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router";
 
 
 const Register = () => {
@@ -17,6 +19,7 @@ const Register = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -58,15 +61,14 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await register(formData);
-      setSuccessMessage(response.data.message);
-      setError("");
+      const response = await registerUser(formData);
+      localStorage.setItem('showToastReg', 'true'); 
+      navigate("/login");
     } catch (error) {
       setError(error.response?.data?.message || "Error registering user");
     } finally {
       setLoading(false);
     }
-  };
 
   return (
     <div className="container py-5 h-100">
@@ -140,6 +142,7 @@ const Register = () => {
       </div>
     </div>
     </div>
+
     </div>
 
   );

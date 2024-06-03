@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getCurrentUser } from './services/auth_service';
 import { fetchPosts } from './services/api';
 import { fetchCategories } from './services/category_api';
-import searchIcon from './images/search-heart.svg';
+import search from './images/search-heart.svg';
 import { getAllTags, getPostsByTags } from "./services/tags_api";
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -32,7 +32,7 @@ export default function Home() {
         setPosts(Array.isArray(postData) ? postData : []);
       }
     } catch (error) {
-      console.error('Error fetching posts:', error.message);
+      console.error("Error fetching posts:", error.message);
     }
   };
 
@@ -134,10 +134,29 @@ export default function Home() {
                   <p>No posts yet</p>
                 </div>
               ) : (
-                posts.map(post => (
+                posts.map((post) => (
                   <div className="col-lg-6" key={post.id}>
                     <div className="card mb-4">
-                      <img className="card-img-top" src={post.photo} alt="Post" />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: 200,
+                        }}
+                      >
+                        <img
+                          className="card-img-top"
+                          src={post.photo}
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            width: "auto",
+                            height: "auto",
+                          }}
+                          alt="Post"
+                        />
+                      </div>
                       <div className="card-body">
                         <div className="small text-muted">{post.createdAt}</div>
                         <h2 className="card-title h4">{post.title}</h2>
@@ -171,7 +190,7 @@ export default function Home() {
                       id="button-search"
                       type="submit"
                     >
-                      <img src={searchIcon} alt="Search" />
+                      <img src={search}></img>
                     </button>
                   </div>
                 </form>
@@ -221,7 +240,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }

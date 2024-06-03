@@ -4,6 +4,8 @@ import { getCurrentUser } from "./services/auth_service";
 import pen from "./images/pen-fill.svg";
 import { getUserInfo } from "./services/api";
 import defaultPhoto from "./images/avatar.jpg";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Profile = () => {
   const [redirect, setRedirect] = useState(null);
@@ -28,17 +30,20 @@ const Profile = () => {
           console.error("Error fetching user info:", error);
         }
       }
+      
+      const showToast = localStorage.getItem('showToast');
+      if (showToast) {
+        toast.success("Successful loged in");
+        localStorage.removeItem('showToast'); // Clear the flag
+      }
     };
-
+    
     fetchCurrentUser();
   }, []);
 
+
   if (redirect) {
     return <Navigate to={redirect} />;
-  }
-
-  if (!currentUser.username) {
-    return null;
   }
 
   return (
@@ -107,7 +112,6 @@ const Profile = () => {
                     </div>
                   </div>
                   <hr />
-
                   <div className="row">
                     <div className="col-sm-3">
                       <p className="mb-0">Token</p>
@@ -122,6 +126,7 @@ const Profile = () => {
           </div>
         </div>
       </form>
+      <ToastContainer />
     </>
   );
 };
