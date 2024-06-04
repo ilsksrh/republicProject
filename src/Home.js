@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getCurrentUser } from './services/auth_service';
 import { fetchPosts } from './services/api';
 import { fetchCategories } from './services/category_api';
@@ -7,6 +7,7 @@ import search from './images/search-heart.svg';
 import { getAllTags, getPostsByTags } from "./services/tags_api";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Unauthorized } from './services/checkRole';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -17,6 +18,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const currentUser = getCurrentUser();
+  const location = useLocation();
+
 
 
 
@@ -26,6 +29,11 @@ export default function Home() {
       toast.success("Successfully created post!");
       localStorage.removeItem("showToastCreatePost");
     }
+    if (location.state?.toastMessage) {
+      toast.success(location.state.toastMessage);
+    }
+
+
     loadCategories();
     loadPosts();
     loadTags();
@@ -118,18 +126,19 @@ export default function Home() {
     loadPosts();
   };
 
-  if (!currentUser) {
-    return (
-      <div className="container p-4">
-        <div className="alert alert-warning" role="alert">
-          You need to log in first!
-        </div>
-      </div>
-    );
-  }
+  // if (!currentUser) {
+  //   return (
+  //     <div className="container p-4">
+  //       <div className="alert alert-warning" role="alert">
+  //         You need to log in first!
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>
+      <Unauthorized />
       <div className="container p-4">
         <div className='mb-4 d-flex'>
           <button onClick={handleShowMyPosts} className="btn btn-success" style={{ marginRight: '10px' }}>My Posts</button>

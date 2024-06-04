@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCategories } from "../services/category_api";
 import { createPost } from "../services/post_api";
+import { Unauthorized } from "../services/checkRole";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,8 +16,17 @@ const CreatePost = () => {
   const navigate = useNavigate();
 
   const loadCategories = async () => {
-    const catData = await fetchCategories();
-    setCategories(catData);
+    try {
+      const catData = await fetchCategories();
+      setCategories(catData);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error('Unauthorized access. Please log in.');
+        navigate('/login');
+      } else {
+        toast.error('Error fetching categories. Please try again.');
+      }
+    }
   };
 
   useEffect(() => {
@@ -27,11 +37,19 @@ const CreatePost = () => {
     e.preventDefault();
     try {
       const response = await createPost(title, photo, description, categoryId);
-      localStorage.setItem("showToastCreatePost", true)
-      navigate("/home")
-
+      if (response.status === 200 || response.status === 201) {
+        localStorage.setItem("showToastCreatePost", true);
+        navigate("/home");
+      } else {
+        throw new Error('Unexpected response status');
+      }
     } catch (error) {
-      toast.error("Error creating post. Please try again.");
+      if (error.response && error.response.status === 401) {
+        toast.error('Unauthorized. Please log in.');
+        navigate('/login'); // Redirect to login page
+      } else {
+        toast.error("Error creating post. Please try again.");
+      }
     }
   };
 
@@ -42,6 +60,7 @@ const CreatePost = () => {
 
   return (
     <div className="container">
+      <Unauthorized />
       <div className="row justify-content-center">
         <div className="col-lg-6">
           <div>

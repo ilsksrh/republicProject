@@ -7,6 +7,7 @@ import { fetchOnePost } from '../services/post_api';
 import { getCurrentUser } from '../services/auth_service';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { Unauthorized } from '../services/checkRole';
 
 
 
@@ -23,9 +24,18 @@ const EditPost = () => {
     const currentUser = getCurrentUser();
     
     const loadCategories = async () => {
-        const catData = await fetchCategories();
-        setCategories(catData);
-      };  
+        try {
+          const catData = await fetchCategories();
+          setCategories(catData);
+        } catch (error) {
+          if (error.response && error.response.status === 401) {
+            toast.error('Unauthorized access. Please log in.');
+            navigate('/login');
+          } else {
+            toast.error('Error fetching categories. Please try again.');
+          }
+        }
+      };
     
     useEffect(() => {
         loadPost();
@@ -63,8 +73,10 @@ const EditPost = () => {
                 headers: authHeader()
             });
             setError(null);
-            localStorage.setItem("toastEditPost",true)
-            navigate(`/posts/${postId}`)
+            // localStorage.setItem("toastEditPost", true)
+            // navigate(`/posts/${postId}`)
+            navigate(`/posts/${postId}`, { state: { toastMessage: "Successfully updated post!" } });
+
         } catch (error) {
             setError('Error updating post. Please try again.');
             console.error('Error updating post:', error);
@@ -79,6 +91,7 @@ const EditPost = () => {
 
     return (
         <div className="container mt-5">
+            <Unauthorized />
             <div className="row justify-content-center">
                 <div className="col-lg-6">
                     <div>

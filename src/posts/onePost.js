@@ -8,11 +8,14 @@ import redHeart from "../images/like.jpg";
 import blackHeart from "../images/unlike.jpg";
 import x from "../images/x-circle.svg";
 import pen from "../images/pen-fill.svg";
+import { useLocation } from "react-router";
 
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { unauthorized } from "../services/checkRole";
 
 export default function OnePost() {
+  const location = useLocation()
   const [post, setPost] = useState(null);
   const [tags, setTags] = useState([]);
   const [isAuthorOrModerator, setIsAuthorOrModerator] = useState(false);
@@ -33,7 +36,17 @@ export default function OnePost() {
     }
   };
 
+
   useEffect(() => {
+    // const toastEditPost = localStorage.getItem('toastEditPost')
+    // if(toastEditPost){
+    //   toast.success("Succesfully updated post")
+    //   localStorage.removeItem('toastEditPost')
+    // }
+    if (location.state?.toastMessage) {
+      toast.success(location.state.toastMessage);
+    }
+
     async function fetchPostAndTags() {
       try {
         const postData = await fetchOnePost(postId);
@@ -44,7 +57,6 @@ export default function OnePost() {
         console.error("Error fetching post or tags:", error.message);
       }
     }
-
     fetchPostAndTags();
     loadTags();
   }, [postId]);
@@ -60,9 +72,9 @@ export default function OnePost() {
 
   const handleDelete = async () => {
     try {
-      await deletePost(postId);
-      toast.success("Post deleted successfully");
-      navigate("/home");
+      await deletePost(postId, navigate);
+      localStorage.setItem("toastDel")
+      navigate("/home")
     } catch (error) {
       if (error.message.includes('401')) {
         navigate('/unauthorized');
@@ -133,10 +145,20 @@ export default function OnePost() {
                   {post.createdAt}
                 </div>
               </header>
-              <figure className="mb-4">
+              <figure className="mb-4" style={{
+                          display: "flex",
+                         
+                          height: 370,
+                        }}>
                 <img
                   className="img-fluid rounded"
                   src={post.photo}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    width: "auto",
+                    height: "auto",
+                  }}
                   alt="Post"
                 />
               </figure>
@@ -181,8 +203,8 @@ export default function OnePost() {
                     </li>
                   ))}
                 </ul>
-                <button className="btn btn-primary me-2" onClick={handleAddTag}>
-                  Add tags <img src={pen} className="d-flex" alt="Edit" />
+                <button className="btn btn-success" onClick={handleAddTag}>
+                 <img src={pen} className="" alt="Edit" />  Add tags
                 </button>
               </div>
             </div>

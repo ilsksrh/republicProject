@@ -92,7 +92,7 @@ const Register = () => {
                       value={formData.username}
                       onChange={handleChange}
                       className="form-control"
-                      required
+                      
                     />
                   </div>
 
@@ -104,7 +104,7 @@ const Register = () => {
                       value={formData.email}
                       onChange={handleChange}
                       className="form-control"
-                      required
+                      
                     />
                   </div>
 
@@ -116,7 +116,7 @@ const Register = () => {
                       value={formData.password}
                       onChange={handleChange}
                       className="form-control"
-                      required
+                      
                     />
                   </div>
 
@@ -128,7 +128,7 @@ const Register = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       className="form-control"
-                      required
+
                     />
                   </div>
                   <div className="mt-2"><p>Go to <Link to="/login">Login</Link></p></div>
