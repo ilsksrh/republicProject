@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import animalsImage from '../images/animals.png';
 import { login } from "../services/auth_service";
 import { getCurrentUser } from "../services/auth_service";
@@ -36,7 +36,7 @@ const LoginForm = () => {
         console.log("Token activated:", user.accessToken);
         localStorage.setItem('showToast', 'true');
         navigate('/profile');
-        window.location.reload()
+        // window.location.reload()
       } else {
         setError("Login failed, no token found");
       }
@@ -82,16 +82,18 @@ const LoginForm = () => {
                     required
                   />
                 </div>
+                <div className="mt-2"><p>Don't have an account? <Link to="/register">Register</Link></p></div>
                 {error && <div style={{ color: 'red' }} className="text-center pt-4">{error}</div>}
-                <div className="pt-4">
+                <div className="pt-2">
                   {loading ? <div className="text-center pt-4">Loading...</div> : <button className="btn btn-success btn-block">Login</button>}
                 </div>
               </form>
+            
             </div>
           </div>
         </div>
       </div>
-      <ToastContainer /> {/* Include ToastContainer component here */}
+      <ToastContainer />
     </div>
   );
 };

@@ -2,45 +2,71 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { getCurrentUser } from "./services/auth_service";
 import pen from "./images/pen-fill.svg";
-import { getUserInfo } from "./services/api";
-import defaultPhoto from "./images/avatar.jpg";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import defaultPhoto from "./images/avatar.jpg";
 
 const Profile = () => {
   const [redirect, setRedirect] = useState(null);
-  const [currentUser, setCurrentUser] = useState({ username: "" });
-  const [user, setUser] = useState("");
+  const [currentUser, setCurrentUser] = useState({
+    currentUsername: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    avatar: "",
+    phone: "",
+    accessToken: ""
+  });
 
   useEffect(() => {
+    const showToast = localStorage.getItem('showToast');
+    if (showToast) {
+      toast.success("Successfully logged in");
+      localStorage.removeItem('showToast');
+    }
+
     const fetchCurrentUser = async () => {
       const user = getCurrentUser();
-      console.log(user);
       if (!user) {
         setRedirect("/home");
-      } else {
-        try {
-          const userInfo = await getUserInfo(user.id);
-          const currentUserInfo = await getCurrentUser();
-
-          setCurrentUser(userInfo);
-          setUser(currentUserInfo);
-          console.log("User Info:", userInfo);
-        } catch (error) {
-          console.error("Error fetching user info:", error);
-        }
+        return;
       }
-      
-      const showToast = localStorage.getItem('showToast');
-      if (showToast) {
-        toast.success("Successful loged in");
-        localStorage.removeItem('showToast'); // Clear the flag
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const userData = await response.json();
+        setCurrentUser({
+          currentUsername: user.username,
+          email: user.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          avatar: userData.avatar,
+          phone: userData.phone,
+          accessToken: user.accessToken
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setRedirect("/home");
       }
     };
-    
+
     fetchCurrentUser();
   }, []);
 
+  useEffect(() => {
+    const showToastEditProfile = localStorage.getItem("showToastEditProfile");
+    if (showToastEditProfile) {
+      toast.success("Successfully edited profile!");
+      localStorage.removeItem("showToastEditProfile");
+    }
+  }, []);
 
   if (redirect) {
     return <Navigate to={redirect} />;
@@ -59,7 +85,7 @@ const Profile = () => {
                     alt="avatar"
                     className="rounded-circle img-fluid"
                   />
-                  <h5 className="my-3">{currentUser.username}</h5>
+                  <h5 className="my-3">{currentUser.currentUsername}</h5>
                   <p className="text-muted mb-1">It's me!</p>
                   <p className="text-muted mb-4">Hello</p>
                 </div>
@@ -99,7 +125,7 @@ const Profile = () => {
                       <p className="mb-0">Email</p>
                     </div>
                     <div className="col-sm-9">
-                      <p className="text-muted mb-0">{user.email}</p>
+                      <p className="text-muted mb-0">{currentUser.email}</p>
                     </div>
                   </div>
                   <hr />
@@ -117,7 +143,7 @@ const Profile = () => {
                       <p className="mb-0">Token</p>
                     </div>
                     <div className="col-sm-9">
-                      <p className="text-muted mb-0">{user.accessToken}</p>
+                      <p className="text-muted mb-0">{currentUser.accessToken}</p>
                     </div>
                   </div>
                 </div>

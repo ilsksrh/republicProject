@@ -1,6 +1,6 @@
 import { get, post, del, put } from "./api";
 import { authHeader, getCurrentUser } from "./auth_service";
-const currentUser = getCurrentUser();
+
 
 export const fetchCategories = async () => {
   try {

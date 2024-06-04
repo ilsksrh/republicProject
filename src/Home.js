@@ -5,10 +5,8 @@ import { fetchPosts } from './services/api';
 import { fetchCategories } from './services/category_api';
 import search from './images/search-heart.svg';
 import { getAllTags, getPostsByTags } from "./services/tags_api";
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -18,21 +16,41 @@ export default function Home() {
   const [userId, setUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState([]);
-  
   const currentUser = getCurrentUser();
 
-  
+
+
+  useEffect(() => {
+    const showToastCreatePost = localStorage.getItem("showToastCreatePost");
+    if (showToastCreatePost) {
+      toast.success("Successfully created post!");
+      localStorage.removeItem("showToastCreatePost");
+    }
+    loadCategories();
+    loadPosts();
+    loadTags();
+  }, []);
+
+
+  useEffect(() => {
+    loadCategories();
+    loadPosts();
+    loadTags();
+  }, [selectedCategoryId, userId, searchTerm, selectedTagIds]);
+
+
   const loadPosts = async () => {
     try {
+      let postData;
       if (selectedTagIds.length > 0) {
-        const postData = await getPostsByTags(selectedTagIds);
-        setPosts(Array.isArray(postData) ? postData : []);
+        postData = await getPostsByTags(selectedTagIds);
       } else {
-        const postData = await fetchPosts(selectedCategoryId, userId, searchTerm);
-        setPosts(Array.isArray(postData) ? postData : []);
+        postData = await fetchPosts(selectedCategoryId, userId, searchTerm);
       }
+      setPosts(Array.isArray(postData) ? postData : []);
     } catch (error) {
       console.error("Error fetching posts:", error.message);
+      setPosts([]);
     }
   };
 
@@ -56,17 +74,11 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    loadCategories();
-    loadPosts();
-    loadTags();
-  }, [selectedCategoryId, userId, searchTerm, selectedTagIds]);
-
   const handleShowMyPosts = () => {
     setUserId(currentUser.id);
     setSelectedCategoryId(null);
     setSearchTerm('');
-    setSelectedTagIds([]); 
+    setSelectedTagIds([]);
   };
 
   const handleShowAllPosts = () => {
@@ -190,7 +202,7 @@ export default function Home() {
                       id="button-search"
                       type="submit"
                     >
-                      <img src={search}></img>
+                      <img src={search} alt="Search" />
                     </button>
                   </div>
                 </form>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authHeader } from '../services/auth_service';
-import { fetchCategories } from '../services/api';
+import { fetchCategories } from '../services/category_api';
 import { fetchOnePost } from '../services/post_api';
 import { getCurrentUser } from '../services/auth_service';
 import { ToastContainer, toast } from 'react-toastify';

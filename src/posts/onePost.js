@@ -1,11 +1,16 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { authHeader } from "../services/auth_service";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { deletePost, fetchOnePost } from "../services/post_api";
 import { getCurrentUser } from "../services/auth_service";
+import { addExistingTagForPost, getPostsbyTag, getAllTags, addTagToPost, editTag, deleteTagFromPost, getTagsForPost } from "../services/tags_api";
+import redHeart from "../images/like.jpg";
+import blackHeart from "../images/unlike.jpg";
+import x from "../images/x-circle.svg";
+import pen from "../images/pen-fill.svg";
 
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function OnePost() {
   const [post, setPost] = useState(null);
@@ -13,37 +18,108 @@ export default function OnePost() {
   const [isAuthorOrModerator, setIsAuthorOrModerator] = useState(false);
   const [isModerator, setIsModerator] = useState(false);
   const [allTags, setAllTags] = useState([]);
-  const [message, setMessage] = useState({ text: "", type: "" });
 
   const { postId } = useParams();
   const currentUser = getCurrentUser();
+  const navigate = useNavigate();
 
-  
+  const loadTags = async () => {
+    try {
+      const tagsData = await getAllTags();
+      setAllTags(Array.isArray(tagsData) ? tagsData : []);
+    } catch (error) {
+      console.error('Error fetching tags:', error.message);
+      setAllTags([]);
+    }
+  };
+
   useEffect(() => {
-    // fetchPost(postId)
-    fetchOnePost(postId).then((postData) => {
-      setPost(postData);
-      console.log(postData);
-      console.log("hi")
-      console.log(postData.user?.username)
-    });
-  }, [postId]);
+    async function fetchPostAndTags() {
+      try {
+        const postData = await fetchOnePost(postId);
+        setPost(postData);
+        const tagData = await getTagsForPost(postId);
+        setTags(tagData);
+      } catch (error) {
+        console.error("Error fetching post or tags:", error.message);
+      }
+    }
 
+    fetchPostAndTags();
+    loadTags();
+  }, [postId]);
 
   useEffect(() => {
     if (post && currentUser) {
-        const isAuthor = post.user.id === currentUser.id;
-        const isModerator = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR");
-        setIsAuthorOrModerator(isAuthor || isModerator);
+      const isAuthor = post.user.id === currentUser.id;
+      const isMod = currentUser.roles && currentUser.roles.includes("ROLE_MODERATOR");
+      setIsAuthorOrModerator(isAuthor || isMod);
+      setIsModerator(isMod);
     }
   }, [post, currentUser]);
 
-  const handleDelete = () => {
-    deletePost(postId).then(() => {
-    })
-  }
+  const handleDelete = async () => {
+    try {
+      await deletePost(postId);
+      toast.success("Post deleted successfully");
+      navigate("/home");
+    } catch (error) {
+      if (error.message.includes('401')) {
+        navigate('/unauthorized');
+      } else {
+        console.error("Error deleting post:", error.message);
+      }
+    }
+  };
 
- 
+  const handleShowTagsPosts = async (tagId) => {
+    try {
+      const tags = await getTagsForPost(postId);
+      setTags(tags);
+    } catch (error) {
+      if (error.message.includes('401')) {
+        navigate('/unauthorized');
+      } else {
+        console.error("Error showing tags for post:", error.message);
+      }
+    }
+  };
+
+  const handleAddTag = async () => {
+    const tagNames = allTags.map(tag => tag.name);
+    const tagName = prompt(`Enter the tag name from the list: \n${tagNames.join("\n")}`);
+    if (tagName) {
+      const selectedTag = allTags.find(tag => tag.name === tagName);
+      if (selectedTag) {
+        const tagExists = tags.some(tag => tag.id === selectedTag.id);
+        if (tagExists) {
+          toast.warn(`Tag "${tagName}" is already set for this post`);
+        } else {
+          try {
+            await addExistingTagForPost(postId, selectedTag.id);
+            const updatedTags = await getTagsForPost(postId);
+            toast.success(`Tag "${tagName}" added successfully`);
+            setTags(updatedTags);
+          } catch (error) {
+            console.error("Error adding existing tag:", error.message);
+          }
+        }
+      } else {
+        toast.error(`Tag "${tagName}" does not exist.`);
+      }
+    }
+  };
+
+  const handleDeleteTag = async (tagId, tagName) => {
+    try {
+      await deleteTagFromPost(postId, tagId);
+      const updatedTags = await getTagsForPost(postId);
+      setTags(updatedTags);
+      toast.success(`Tag "${tagName}" deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting tag:", error.message);
+    }
+  };
 
   return (
     <div className="container mt-5">
@@ -85,7 +161,6 @@ export default function OnePost() {
               </section>
             </article>
           )}
-          
         </div>
         <div className="col-lg-4">
           <div className="card mb-4">
@@ -101,15 +176,11 @@ export default function OnePost() {
                           <button className="btn btn-danger btn-sm ml-2" onClick={() => handleDeleteTag(tag.id, tag.name)}>
                             <img src={x} className="d-flex" alt="Delete" />
                           </button>
-                          
                         </div>
                       )}
                     </li>
                   ))}
                 </ul>
-                {message.text && (
-                            <p className={`text-${message.type === "error" ? "danger" : "success"} mb-0 ml-2`}>{message.text}</p>
-                          )}
                 <button className="btn btn-primary me-2" onClick={handleAddTag}>
                   Add tags <img src={pen} className="d-flex" alt="Edit" />
                 </button>
@@ -118,7 +189,7 @@ export default function OnePost() {
           </div>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
-  )
+  );
 }

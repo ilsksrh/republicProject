@@ -76,9 +76,28 @@ export const fetchPosts = async (categoryId = null, userId = null, searchTerm = 
 
 export const getUserInfo = async (userId) => {
   try {
-    return await get(`http://localhost:8080/api/users/${userId}`);
+    return await get(`http://localhost:8080/api/users/${userId}`,{ headers: getHeaders() });
   } catch (error) {
     console.error('Error fetching user info:', error.message);
     throw error;
   }
 };
+
+
+export const fetchAllUsers = async () => {
+  try {
+    return await get('http://localhost:8080/api/users/all', { headers: getHeaders() });
+  } catch (error) {
+    console.error("Error fetching users:", error.message);
+    throw error;
+  }
+};
+
+export const deleteUser = async (username) => {
+  try {
+    return await del(`http://localhost:8080/api/users/${username}`)
+  }catch (error) {
+    console.log("Error delete user", error.message)
+    throw error
+  }
+}

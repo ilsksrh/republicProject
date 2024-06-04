@@ -35,17 +35,22 @@ const Main = () => {
     }, [fotos.length]);
   
     
+    const currentUser = localStorage.getItem('user');
   
     return (
       <div>
-        <div className="d-flex flex-column justify-content-center align-items-center text-white" style={{ height: "800px", backgroundImage: `url(${fotos[fotoIndex]})`, backgroundSize: "cover", backgroundColor: "rgba(0,0,0,0.4)" }}>
-          <div className="text-center">
-            <h2>Делайте мир лучше вместе с нами</h2>
-              <div className="mt-3">
-                <Link to='/register' className="btn btn-success btn-lg">Зарегистрироваться</Link>
-              </div>
-          </div>
-        </div>
+            <div className="d-flex flex-column justify-content-center align-items-center text-white" style={{ height: "800px", backgroundImage: `url(${fotos[fotoIndex]})`, backgroundSize: "cover", backgroundColor: "rgba(0,0,0,0.4)" }}>
+                <div className="text-center">
+                    <h2>Делайте мир лучше вместе с нами</h2>
+                    <div className="mt-3">
+                        {currentUser ? (
+                            <Link to="/createPost" className="btn btn-success btn-lg">Создать пост</Link>
+                        ) : (
+                            <Link to='/login' className="btn btn-success btn-lg">Войти</Link>
+                        )}
+                    </div>
+                </div>
+            </div>
   
         <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "500px" }}>
           <div className="w-75 text-center">

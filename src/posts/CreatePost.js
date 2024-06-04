@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchCategories } from "../services/api";
+import { fetchCategories } from "../services/category_api";
 import { createPost } from "../services/post_api";
 
 import { ToastContainer, toast } from "react-toastify";
